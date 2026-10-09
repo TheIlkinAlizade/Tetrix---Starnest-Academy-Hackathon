@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { ZodType } from "zod";
 
-export const MODEL = process.env.GEMINI_MODEL || "gemini-3.8-flash";
+export const MODEL = process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
 
 export class AIError extends Error {
   status: number;

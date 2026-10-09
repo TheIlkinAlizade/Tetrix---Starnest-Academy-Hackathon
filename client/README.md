@@ -1,4 +1,4 @@
-# Kompas AI
+# Prodvisor
 
 Kiçik biznes sahibləri üçün: biznesi tanıyan, müştəri söhbətlərini sübutla analiz edən və konkret addımlar təklif edən AI platforması.
 (Ad `lib/config.ts` faylındakı `APP_NAME` ilə dəyişdirilir.)
@@ -7,7 +7,7 @@ Kiçik biznes sahibləri üçün: biznesi tanıyan, müştəri söhbətlərini s
 
 ```bash
 npm install
-cp .env.example .env.local      # ANTHROPIC_API_KEY dəyərini yazın
+cp .env.example .env.local      # GEMINI_API_KEY dəyərini yazın
 npm run dev                     # http://localhost:3000
 ```
 
@@ -27,8 +27,8 @@ Sürətli başlanğıc üçün onboarding səhifəsində "Sintetik demo biznesi 
 
 ## Texniki qeydlər
 
-- Next.js 15 (App Router), TypeScript, Tailwind 3, Zod, Anthropic SDK. AI çağırışları yalnız server route-larında (`app/api/ai/*`).
-- Model: `ANTHROPIC_MODEL` (standart `claude-sonnet-5-5`).
+- Next.js 15 (App Router), TypeScript, Tailwind 3 və Zod. AI sorğuları Gemini API vasitəsilə server route-larında işləyir. AI çağırışları yalnız server route-larında (`app/api/ai/*`).
+- Model: `GEMINI_MODEL` (standart `gemini-3.5-flash-lite`).
 - AI cavabları Zod ilə yoxlanılır, uğursuz olarsa bir dəfə düzəliş istənir, sonra aydın xəta göstərilir.
 - Sübut yoxlaması: modelin gətirdiyi sitatın dialoqda sözbəsöz olub-olmadığı serverdə yoxlanır və UI-də göstərilir.
 - Məxfilik: telefon, e-poçt və kart nömrələri modelə göndərilməzdən əvvəl maskalanır. Dialoq mətni etibarsız məlumat kimi qeyd olunub (prompt injection testi `/eval`-dadır).

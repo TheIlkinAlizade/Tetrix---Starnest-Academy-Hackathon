@@ -38,8 +38,8 @@ export function Button({
 }) {
   const base = "inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50";
   const v = {
-    primary: "bg-accent text-white hover:bg-accent-dark",
-    secondary: "border border-accent/40 bg-white text-accent-dark hover:bg-accent-soft",
+    primary: "bg-accent text-white shadow-sm hover:bg-accent-dark",
+    secondary: "border border-line bg-white text-ink hover:border-accent/40 hover:bg-lilac",
     ghost: "text-muted hover:bg-bg hover:text-ink",
     danger: "border border-bad/30 bg-white text-bad hover:bg-bad-soft",
   }[variant];
