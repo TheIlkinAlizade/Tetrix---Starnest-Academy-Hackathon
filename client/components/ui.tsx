@@ -1,76 +1,13 @@
-import { ReactNode } from "react";
-import { AlertTriangle, Loader2 } from "lucide-react";
+import {ReactNode} from "react";
+import {AlertTriangle,ArrowUpRight,LoaderCircle,Sparkles} from "lucide-react";
 import Link from "next/link";
-
-export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <section className={`rounded-2xl border border-line bg-white p-5 shadow-card ${className}`}>{children}</section>;
-}
-
-export function PageHeader({ title, sub, right }: { title: string; sub?: string; right?: ReactNode }) {
-  return (
-    <header className="mb-6 flex flex-wrap items-end justify-between gap-3">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
-        {sub && <p className="mt-1 max-w-2xl text-sm text-muted">{sub}</p>}
-      </div>
-      {right}
-    </header>
-  );
-}
-
-type Tone = "neutral" | "accent" | "warn" | "good" | "bad";
-const tones: Record<Tone, string> = {
-  neutral: "bg-bg text-muted border-line",
-  accent: "bg-accent-soft text-accent-dark border-accent/20",
-  warn: "bg-warn-soft text-warn border-warn-line",
-  good: "bg-good-soft text-good border-good/20",
-  bad: "bg-bad-soft text-bad border-bad/20",
-};
-export function Badge({ children, tone = "neutral" }: { children: ReactNode; tone?: Tone }) {
-  return <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium ${tones[tone]}`}>{children}</span>;
-}
-
-export function Button({
-  children, onClick, variant = "primary", disabled, type = "button", className = "", href,
-}: {
-  children: ReactNode; onClick?: () => void; variant?: "primary" | "secondary" | "ghost" | "danger";
-  disabled?: boolean; type?: "button" | "submit"; className?: string; href?: string;
-}) {
-  const base = "inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50";
-  const v = {
-    primary: "bg-accent text-white shadow-sm hover:bg-accent-dark",
-    secondary: "border border-line bg-white text-ink hover:border-accent/40 hover:bg-lilac",
-    ghost: "text-muted hover:bg-bg hover:text-ink",
-    danger: "border border-bad/30 bg-white text-bad hover:bg-bad-soft",
-  }[variant];
-  const cls = `${base} ${v} ${className}`;
-  if (href) return <Link href={href} className={cls}>{children}</Link>;
-  return <button type={type} onClick={onClick} disabled={disabled} className={cls}>{children}</button>;
-}
-
-export function Spinner({ label }: { label?: string }) {
-  return (
-    <span className="inline-flex items-center gap-2 text-sm text-muted" role="status">
-      <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> {label}
-    </span>
-  );
-}
-
-export function ErrorNote({ children }: { children: ReactNode }) {
-  return (
-    <div role="alert" className="flex items-start gap-2 rounded-xl border border-bad/25 bg-bad-soft px-3.5 py-3 text-sm text-bad">
-      <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
-      <div>{children}</div>
-    </div>
-  );
-}
-
-export function Empty({ title, text, action }: { title: string; text: string; action?: ReactNode }) {
-  return (
-    <Card className="text-center">
-      <h2 className="text-base font-semibold">{title}</h2>
-      <p className="mx-auto mt-1 max-w-md text-sm text-muted">{text}</p>
-      {action && <div className="mt-4 flex justify-center gap-2">{action}</div>}
-    </Card>
-  );
-}
+export function Card({children,className=""}:{children:ReactNode;className?:string}){return <section className={`surface-card p-5 sm:p-6 ${className}`}>{children}</section>}
+export function PageHeader({title,sub,right,eyebrow}:{title:string;sub?:string;right?:ReactNode;eyebrow?:string}){return <header className="mb-7 flex flex-wrap items-end justify-between gap-4"><div className="max-w-[690px]">{eyebrow&&<p className="label-eyebrow mb-2 text-accent">{eyebrow}</p>}<h1 className="text-[26px] font-extrabold leading-[1.25] tracking-[-.045em] sm:text-[32px]">{title}</h1>{sub&&<p className="mt-2 max-w-2xl text-[13px] leading-6 text-muted sm:text-sm">{sub}</p>}</div>{right&&<div className="flex flex-wrap items-center gap-2">{right}</div>}</header>}
+type Tone="neutral"|"accent"|"warn"|"good"|"bad";
+const tones:Record<Tone,string>={neutral:"bg-[#F7F5F8] text-[#746D80] border-[#EEEAF1]",accent:"bg-[#F2ECFF] text-[#6748CC] border-[#E6DCFC]",warn:"bg-[#FFF6E8] text-[#94621E] border-[#F5E8CE]",good:"bg-[#EAF7EF] text-[#287250] border-[#D7ECDD]",bad:"bg-[#FFF0F1] text-[#B94B53] border-[#F8DCDD]"};
+export function Badge({children,tone="neutral"}:{children:ReactNode;tone?:Tone}){return <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-semibold leading-[1.3] ${tones[tone]}`}>{children}</span>}
+export function Button({children,onClick,variant="primary",disabled,type="button",className="",href}:{children:ReactNode;onClick?:()=>void;variant?:"primary"|"secondary"|"ghost"|"danger";disabled?:boolean;type?:"button"|"submit";className?:string;href?:string}){const base="inline-flex min-h-[43px] items-center justify-center gap-2 rounded-xl px-[17px] py-2.5 text-[13px] font-bold transition-all duration-150 disabled:cursor-not-allowed disabled:opacity-50";const v={primary:"bg-accent text-white shadow-[0_3px_10px_rgba(117,86,216,.17)] hover:bg-accent-dark hover:-translate-y-[1px]",secondary:"border border-line bg-white text-ink hover:border-[#CABDEE] hover:bg-[#FAF8FF]",ghost:"text-muted hover:bg-[#F3EFFA] hover:text-ink",danger:"border border-bad/30 bg-white text-bad hover:bg-bad-soft"}[variant];const classes=`${base} ${v} ${className}`;if(href)return <Link href={href} className={classes}>{children}</Link>;return <button type={type} onClick={onClick} disabled={disabled} className={classes}>{children}</button>}
+export function Spinner({label}:{label?:string}){return <span className="inline-flex items-center gap-2 text-[13px] text-muted" role="status"><LoaderCircle className="h-4 w-4 animate-spin text-accent" aria-hidden/>{label||"Yüklənir..."}</span>}
+export function ErrorNote({children}:{children:ReactNode}){return <div role="alert" className="flex items-start gap-2 rounded-xl border border-[#F3D9DF] bg-[#FFF2F4] px-3.5 py-3 text-[13px] text-bad"><AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden/><div>{children}</div></div>}
+export function Empty({title,text,action}:{title:string;text:string;action?:ReactNode}){return <Card className="!py-12 text-center"><div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F1EAFF] text-accent"><Sparkles size={24}/></div><h2 className="text-lg font-extrabold">{title}</h2><p className="mx-auto mt-2 max-w-md text-[13px] leading-6 text-muted">{text}</p>{action&&<div className="mt-5 flex justify-center gap-2">{action}</div>}</Card>}
+export function SectionHeader({title,href,label}:{title:string;href?:string;label?:string}){return <div className="mb-4 flex items-center justify-between gap-4"><h2 className="text-base font-extrabold tracking-tight">{title}</h2>{href&&<Link className="inline-flex items-center gap-1 text-xs font-bold text-accent-dark hover:underline" href={href}>{label||"Hamısına bax"}<ArrowUpRight size={14}/></Link>}</div>}

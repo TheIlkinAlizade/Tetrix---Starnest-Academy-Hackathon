@@ -45,6 +45,7 @@ export const KEYS = {
   actions: "kompas.actions",
   chat: "kompas.chat",
   eval: "kompas.eval",
+  campaigns: "prodvisor.campaigns",
 } as const;
 
 export const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);

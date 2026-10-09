@@ -1,121 +1,24 @@
 "use client";
-import { useState } from "react";
-import { Play } from "lucide-react";
-import { EVAL_CASES } from "@/lib/eval-data";
-import { DEMO_PROFILE } from "@/lib/demo";
-import { analyzeConversation } from "@/lib/analyze";
-import { scoreRow, summarize } from "@/lib/eval-metrics";
-import { EvalRow, EvalRun } from "@/lib/types";
-import { KEYS, useStored } from "@/lib/store";
-import { Badge, Button, Card, ErrorNote, PageHeader, Spinner } from "@/components/ui";
-import { INTENT_LABELS, OBJECTION_LABELS, STAGE_LABELS } from "@/lib/schemas";
-
-const pct = (x: number) => `${Math.round(x * 100)}%`;
-
-export default function EvalPage() {
-  const [run, setRun, ready] = useStored<EvalRun | null>(KEYS.eval, null);
-  const [running, setRunning] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [error, setError] = useState("");
-
-  async function start() {
-    setRunning(true); setProgress(0); setError("");
-    const rows: EvalRow[] = new Array(EVAL_CASES.length);
-    let model = "";
-    let idx = 0, done = 0;
-    const worker = async () => {
-      while (idx < EVAL_CASES.length) {
-        const i = idx++;
-        const c = EVAL_CASES[i];
-        try {
-          const out = await analyzeConversation(c.text, DEMO_PROFILE);
-          model = out.model;
-          const a = out.analysis;
-          const got = { intent: a.intent, stage: a.journeyStage, objections: a.objections.map((o) => o.type), unanswered: a.sellerAnalysis.unanswered.length > 0 };
-          const forbidOk = c.forbid ? !JSON.stringify(a).includes(c.forbid) : undefined;
-          rows[i] = scoreRow({ id: c.id, title: c.title }, c.expected, got, { ms: out.meta.ms, evTotal: out.meta.evidence.total, evFound: out.meta.evidence.found, forbidOk });
-        } catch (e) {
-          const msg = e instanceof Error ? e.message : "xəta";
-          rows[i] = { id: c.id, title: c.title, ok: false, error: msg };
-          if (msg.includes("GEMINI_API_KEY")) setError(msg);
-        }
-        setProgress(++done);
-      }
-    };
-    await worker();
-    setRun({ at: new Date().toISOString(), model, rows });
-    setRunning(false);
-  }
-
-  if (!ready) return null;
-  const s = run ? summarize(run) : null;
-
-  return (
-    <>
-      <PageHeader
-        title="Keyfiyyət testi"
-        sub={`${EVAL_CASES.length} sintetik dialoqun əl ilə qoyulmuş etiketləri ilə AI analizinin müqayisəsi. Nəticələr yalnız real işə salmadan hesablanır, əl ilə dəyişdirilmir.`}
-        right={<Button onClick={start} disabled={running}><Play className="h-4 w-4" aria-hidden /> {run ? "Testi yenidən işə sal" : "Testi işə sal"}</Button>}
-      />
-      {running && <div className="mb-4"><Spinner label={`İcra olunur: ${progress}/${EVAL_CASES.length}`} /></div>}
-      {error && <div className="mb-4"><ErrorNote>{error}</ErrorNote></div>}
-
-      {!s ? (
-        <Card><p className="text-sm text-muted">Test hələ işə salınmayıb. Düyməyə basın, 15 dialoq analiz ediləcək (təxminən 1–2 dəqiqə).</p></Card>
-      ) : (
-        <>
-          <p className="mb-3 text-xs text-muted">Son icra: {new Date(run!.at).toLocaleString("az")}{run!.model && ` · model: ${run!.model}`} · biznes konteksti: sintetik “Naxış Atelyesi”</p>
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            {[
-              ["Etiraz dəsti dəqiq düz", pct(s.objectionExact), `${Math.round(s.objectionExact * s.ok)}/${s.ok} dialoq`],
-              ["Etiraz precision / recall", `${pct(s.precision)} / ${pct(s.recall)}`, "etiraz növləri üzrə"],
-              ["Satış mərhələsi", pct(s.stage), "düzgün aşkarlanma"],
-              ["Müştəri niyyəti", pct(s.intent), "düzgün aşkarlanma"],
-              ["Cavabsız sual", pct(s.unanswered), "var/yox düzgünlüyü"],
-              ["Sübut dialoqda var", pct(s.evidence), `${s.evFound}/${s.evTotal} sitat`],
-              ["Prompt injection", `${s.injectionPassed}/${s.injectionTotal}`, "müqavimət göstərdi"],
-              ["Orta analiz müddəti", `${(s.avgMs / 1000).toFixed(1)} san`, `${s.failed} uğursuz sorğu`],
-            ].map(([label, value, note]) => (
-              <Card key={label} className="!p-4">
-                <p className="text-sm text-muted">{label}</p>
-                <p className="mt-1 text-2xl font-semibold tracking-tight">{value}</p>
-                <p className="text-xs text-muted">{note}</p>
-              </Card>
-            ))}
-          </div>
-
-          <Card className="mt-6 overflow-x-auto !p-0">
-            <table className="w-full min-w-[40rem] text-left text-sm">
-              <thead className="border-b border-line text-xs text-muted">
-                <tr><th className="px-4 py-3 font-medium">Dialoq</th><th className="px-3 py-3 font-medium">Etiraz</th><th className="px-3 py-3 font-medium">Mərhələ</th><th className="px-3 py-3 font-medium">Niyyət</th><th className="px-3 py-3 font-medium">Cavabsız</th></tr>
-              </thead>
-              <tbody>
-                {run!.rows.map((r) => {
-                  const c = EVAL_CASES.find((x) => x.id === r.id)!;
-                  if (!r.ok) return <tr key={r.id} className="border-b border-line last:border-0"><td className="px-4 py-3">{r.title}</td><td colSpan={4} className="px-3 py-3 text-bad">{r.error}</td></tr>;
-                  const cell = (ok: boolean | undefined, expected: string, got: string) => (
-                    <td className="px-3 py-3 align-top">
-                      <Badge tone={ok ? "good" : "bad"}>{ok ? "düz" : "yanlış"}</Badge>
-                      {!ok && <p className="mt-1 text-xs text-muted">gözlənilən: {expected}<br />alınan: {got}</p>}
-                    </td>
-                  );
-                  const lbl = (arr: string[]) => (arr.length ? arr.map((x) => OBJECTION_LABELS[x as keyof typeof OBJECTION_LABELS]).join(", ") : "yoxdur");
-                  return (
-                    <tr key={r.id} className="border-b border-line last:border-0">
-                      <td className="px-4 py-3 align-top">{r.title}</td>
-                      {cell(r.objectionsExact, lbl(c.expected.objections), lbl(r.got!.objections))}
-                      {cell(r.stageOk, STAGE_LABELS[c.expected.stage], STAGE_LABELS[r.got!.stage as keyof typeof STAGE_LABELS])}
-                      {cell(r.intentOk, INTENT_LABELS[c.expected.intent], INTENT_LABELS[r.got!.intent as keyof typeof INTENT_LABELS])}
-                      {cell(r.unansweredOk, c.expected.unanswered ? "var" : "yoxdur", r.got!.unanswered ? "var" : "yoxdur")}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </Card>
-          <p className="mt-3 text-xs text-muted">Məhdudiyyət: dialoqlar sintetikdir və etiketləri komanda əl ilə qoyub, ona görə nəticə real müştəri söhbətlərinə ümumiləşdirilməməlidir. “Sübut dialoqda var” göstəricisi sitatın dialoq mətnində sözbəsöz tapılmasını yoxlayır.</p>
-        </>
-      )}
-    </>
-  );
+import {useState} from "react";
+import {ArrowRight,CheckCircle2,Clock3,FlaskConical,Play,ShieldCheck,Sparkles,TriangleAlert} from "lucide-react";
+import {EVAL_CASES} from "@/lib/eval-data";
+import {DEMO_PROFILE} from "@/lib/demo";
+import {analyzeConversation} from "@/lib/analyze";
+import {scoreRow,summarize} from "@/lib/eval-metrics";
+import {EvalRow,EvalRun} from "@/lib/types";
+import {KEYS,useStored} from "@/lib/store";
+import {Badge,Button,Card,ErrorNote,PageHeader,Spinner} from "@/components/ui";
+import {INTENT_LABELS,OBJECTION_LABELS,STAGE_LABELS} from "@/lib/schemas";
+const pct=(v:number)=>`${Math.round(v*100)}%`;
+export default function EvalPage(){const [run,setRun,ready]=useStored<EvalRun|null>(KEYS.eval,null);const [running,setRunning]=useState(false),[progress,setProgress]=useState(0),[error,setError]=useState("");const [showDetails,setShowDetails]=useState(false);
+ async function start(){setRunning(true);setProgress(0);setError("");const rows:EvalRow[]=new Array(EVAL_CASES.length);let model="";for(let i=0;i<EVAL_CASES.length;i++){const c=EVAL_CASES[i];try{const out=await analyzeConversation(c.text,DEMO_PROFILE);model=out.model;const a=out.analysis;const got={intent:a.intent,stage:a.journeyStage,objections:a.objections.map(o=>o.type),unanswered:a.sellerAnalysis.unanswered.length>0};const forbidOk=c.forbid?!JSON.stringify(a).includes(c.forbid):undefined;rows[i]=scoreRow({id:c.id,title:c.title},c.expected,got,{ms:out.meta.ms,evTotal:out.meta.evidence.total,evFound:out.meta.evidence.found,forbidOk});}catch(e){const msg=e instanceof Error?e.message:"Xəta";rows[i]={id:c.id,title:c.title,ok:false,error:msg};if(msg.includes("GEMINI_API_KEY"))setError(msg);}setProgress(i+1);}setRun({at:new Date().toISOString(),model,rows});setRunning(false);setShowDetails(true);}
+ if(!ready)return <div className="skeleton h-56 rounded-2xl"/>;const s=run?summarize(run):null;const metric=(v:number)=>s&&s.ok?pct(v):"—";
+ return <div className="space-y-6"><PageHeader eyebrow="QUALITY ASSURANCE" title="AI analizini necə yoxlayırıq?" sub="15 sintetik dialoq, əvvəlcədən verilmiş düzgün cavablar və həqiqətən işə salınan AI analizi ilə obyektiv yoxlama." right={<Button onClick={start} disabled={running}><Play size={15}/>{run?"Testi yenidən işə sal":"Testi başlat"}</Button>}/>
+ <div className="soft-gradient rounded-[20px] border border-[#E7DBF9] px-6 py-6 sm:px-8"><div className="flex flex-wrap items-center justify-between gap-4"><div className="max-w-[600px]"><div className="flex items-center gap-2 text-[12px] font-bold text-accent-dark"><ShieldCheck size={17}/> Ölçülən nəticələr, uydurulmuş statistikalar yox</div><h2 className="mt-3 font-display text-xl font-extrabold">Məhsulun düzgün işlədiyini real testlərlə sübut edin.</h2><p className="mt-2 text-xs leading-6 text-muted">Sistem fərqli qiymət etirazlarını, müştəri niyyətini, satış mərhələsini və cavabsız qalan sualları əvvəlcədən hazırlanmış nümunələrlə müqayisə edir.</p></div><span className="flex h-14 w-14 items-center justify-center rounded-[20px] bg-white text-accent"><FlaskConical size={26}/></span></div></div>
+ {running&&<Card><div className="flex flex-wrap items-center justify-between gap-3"><Spinner label={`Sınaq davam edir: ${progress}/${EVAL_CASES.length}`}/><span className="text-xs font-bold text-accent-dark">{Math.round(progress/EVAL_CASES.length*100)}%</span></div><div className="mt-4 h-2 overflow-hidden rounded-full bg-[#ECE7F3]"><div className="h-full rounded-full bg-accent transition-all" style={{width:`${progress/EVAL_CASES.length*100}%`}}/></div></Card>}{error&&<ErrorNote>{error}</ErrorNote>}
+ {!s?<Card className="!py-11 text-center"><span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-lilac text-accent"><FlaskConical size={26}/></span><h3 className="mt-4 font-display text-lg font-extrabold">İlk test nəticənizi yaradın</h3><p className="mx-auto mt-2 max-w-md text-xs leading-6 text-muted">AI sorğularını işə salmaq üçün serverdə aktiv Gemini API açarı olmalıdır. Nəticələr yalnız real icradan sonra görünəcək.</p><Button onClick={start} disabled={running} className="mt-5"><Play size={15}/> 15 ssenarini yoxla</Button></Card>:<><div className="flex flex-wrap items-center gap-2 text-xs text-muted"><span>Son test: {new Date(run!.at).toLocaleString("az-AZ")}</span>{run!.model&&<Badge tone="accent">{run!.model}</Badge>}<Badge tone={s.failed?"warn":"good"}>{s.ok}/{s.total} tamamlanıb</Badge></div>
+ <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{[{title:"Etirazın düzgün aşkarlanması",v:metric(s.objectionExact),desc:"Tam uyğun etiraz dəsti",icon:CheckCircle2},{title:"Müştəri niyyəti",v:metric(s.intent),desc:"Düzgün təsnifat",icon:Sparkles},{title:"Satış mərhələsi",v:metric(s.stage),desc:"Düzgün müəyyənləşdirmə",icon:ShieldCheck},{title:"Orta analiz müddəti",v:s.ok?`${(s.avgMs/1000).toFixed(1)} san`:"—",desc:"Uğurlu sınaqlar üzrə",icon:Clock3}].map(x=><Card key={x.title} className="!p-5"><span className="mb-4 flex h-9 w-9 items-center justify-center rounded-xl bg-[#F1EAFC] text-accent"><x.icon size={18}/></span><p className="text-[11px] font-semibold text-muted">{x.title}</p><p className="mt-1 font-display text-[27px] font-extrabold">{x.v}</p><p className="mt-1 text-[11px] text-muted">{x.desc}</p></Card>)}</div>
+ <div className="grid gap-4 md:grid-cols-2"><Card><h3 className="font-display text-[15px] font-extrabold">Digər keyfiyyət göstəriciləri</h3><div className="mt-4 divide-y divide-line">{[["Etiraz dəqiqliyi (precision)",metric(s.precision)],["Etiraz əhatəsi (recall)",metric(s.recall)],["Cavabsız sualın aşkarlanması",metric(s.unanswered)],["Sitatların dialoqda tapılması",s.evTotal?`${s.evFound}/${s.evTotal}`:"—"]].map(([k,v])=><div key={k} className="flex justify-between gap-3 py-3 text-xs"><span className="text-muted">{k}</span><strong>{v}</strong></div>)}</div></Card><Card><h3 className="font-display text-[15px] font-extrabold">Texniki yoxlamalar</h3><div className="mt-4 divide-y divide-line">{[["Uğurlu sorğular",`${s.ok}/${s.total}`],["Uğursuz sorğular",String(s.failed)],["Prompt injection yoxlaması",`${s.injectionPassed}/${s.injectionTotal}`],["Səhvlər (birləşdirilmiş say)",String(s.wrongTotal)]].map(([k,v])=><div key={k} className="flex justify-between gap-3 py-3 text-xs"><span className="text-muted">{k}</span><strong>{v}</strong></div>)}</div></Card></div>
+ <Card className="!p-0"><button onClick={()=>setShowDetails(v=>!v)} className="flex w-full items-center justify-between px-5 py-4 text-left"><span className="font-display text-[15px] font-extrabold">Bütün test nümunələri və fərqlər</span><span className="text-xs font-bold text-accent-dark">{showDetails?"Gizlət":"Göstər"} <ArrowRight size={14} className="inline"/></span></button>{showDetails&&<div className="overflow-x-auto border-t border-line"><table className="w-full min-w-[700px] text-left text-[12px]"><thead className="bg-[#FAF8FC] text-muted"><tr>{["Ssenari","Etiraz","Mərhələ","Niyyət","Cavabsız sual"].map(t=><th key={t} className="px-5 py-3 font-bold">{t}</th>)}</tr></thead><tbody>{run!.rows.map(r=>{const c=EVAL_CASES.find(x=>x.id===r.id)!;if(!r.ok)return <tr key={r.id} className="border-t border-line"><td className="px-5 py-4 font-semibold">{r.title}</td><td colSpan={4} className="px-5 py-4 text-bad">{r.error}</td></tr>;const lab=(values:string[])=>values.length?values.map(x=>OBJECTION_LABELS[x as keyof typeof OBJECTION_LABELS]).join(", "):"yoxdur";const cell=(pass:boolean|undefined,expected:string,actual:string)=><td className="px-5 py-4 align-top"><Badge tone={pass?"good":"bad"}>{pass?"Düz":"Fərq var"}</Badge>{!pass&&<p className="mt-2 text-[11px] leading-5 text-muted">Gözlənilən: {expected}<br/>Alınan: {actual}</p>}</td>;return <tr key={r.id} className="border-t border-line"><td className="px-5 py-4 align-top font-semibold">{r.title}</td>{cell(r.objectionsExact,lab(c.expected.objections),lab(r.got!.objections))}{cell(r.stageOk,STAGE_LABELS[c.expected.stage],STAGE_LABELS[r.got!.stage as keyof typeof STAGE_LABELS])}{cell(r.intentOk,INTENT_LABELS[c.expected.intent],INTENT_LABELS[r.got!.intent as keyof typeof INTENT_LABELS])}{cell(r.unansweredOk,c.expected.unanswered?"Var":"Yoxdur",r.got!.unanswered?"Var":"Yoxdur")}</tr>})}</tbody></table></div>}</Card></>}
+ <div className="flex items-start gap-3 rounded-xl border border-[#ECE6F1] bg-white px-4 py-4 text-[11px] leading-6 text-muted"><TriangleAlert size={17} className="mt-0.5 shrink-0 text-[#AB7B32]"/><p>Test dialoqları sintetikdir və cavabları komanda tərəfindən əvvəlcədən etiketlənib. Nəticələr real müştəri məlumatlarında eyni performans göstərəcəyinə zəmanət vermir.</p></div></div>;
 }

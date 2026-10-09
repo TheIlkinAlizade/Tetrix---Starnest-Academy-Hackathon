@@ -1,48 +1,11 @@
 "use client";
-import { useParams } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import {useParams} from "next/navigation";
+import {ArrowLeft,MessageCircleMore,ShieldCheck} from "lucide-react";
 import Link from "next/link";
-import { ActionItem, Conversation } from "@/lib/types";
-import { KEYS, uid, useStored } from "@/lib/store";
-import { Badge, Button, Card, Empty, PageHeader } from "@/components/ui";
+import {ActionItem,Conversation} from "@/lib/types";
+import {KEYS,uid,useStored} from "@/lib/store";
+import {Badge,Button,Card,Empty,PageHeader} from "@/components/ui";
 import AnalysisView from "@/components/AnalysisView";
-
-export default function CustomerDetail() {
-  const { id } = useParams<{ id: string }>();
-  const [convs, , ready] = useStored<Conversation[]>(KEYS.conversations, []);
-  const [actions, setActions] = useStored<ActionItem[]>(KEYS.actions, []);
-  if (!ready) return null;
-  const conv = convs.find((c) => c.id === id);
-  if (!conv) return <Empty title="Söhbət tapılmadı" text="Bu söhbət silinib və ya başqa brauzerdə yaradılıb." action={<Button href="/customers">Siyahıya qayıt</Button>} />;
-
-  return (
-    <>
-      <Link href="/customers" className="mb-3 inline-flex items-center gap-1 text-sm text-muted hover:text-ink"><ArrowLeft className="h-4 w-4" aria-hidden /> Müştərilər</Link>
-      <PageHeader title={conv.title} right={conv.synthetic ? <Badge>sintetik dialoq</Badge> : undefined} />
-      <div className="grid gap-4 lg:grid-cols-[1fr_22rem]">
-        <div>
-          {conv.status === "done" && conv.analysis ? (
-            <AnalysisView
-              conv={conv}
-              actions={actions}
-              onAddAction={(r) =>
-                setActions((p) => [
-                  { id: uid(), title: r.title, problem: r.problem, recommendation: r.recommendation, priority: r.priority, effort: r.effort, impact: r.expectedImpactHypothesis, status: "todo", note: "", sourceConversationId: conv.id, createdAt: new Date().toISOString() },
-                  ...p,
-                ])
-              }
-            />
-          ) : (
-            <Empty title="Bu söhbət hələ analiz edilməyib" text={conv.error || "Siyahıdan analiz edin."} action={<Button href="/customers">Siyahıya qayıt</Button>} />
-          )}
-        </div>
-        <aside>
-          <Card className="lg:sticky lg:top-6">
-            <h2 className="text-base font-semibold">Yazışma</h2>
-            <pre className="mt-3 max-h-[28rem] overflow-auto whitespace-pre-wrap font-sans text-sm text-ink/90">{conv.text}</pre>
-          </Card>
-        </aside>
-      </div>
-    </>
-  );
+export default function CustomerDetail(){const {id}=useParams<{id:string}>();const [convs,,ready]=useStored<Conversation[]>(KEYS.conversations,[]);const [actions,setActions]=useStored<ActionItem[]>(KEYS.actions,[]);if(!ready)return <div className="skeleton h-60 rounded-2xl"/>;const conv=convs.find(c=>c.id===id);if(!conv)return <Empty title="Söhbət tapılmadı" text="Bu yazışma silinib və ya başqa brauzerdə yaradılıb." action={<Button href="/customers">Söhbətlərə qayıt</Button>}/>;
+ return <div><Link href="/customers" className="mb-6 inline-flex items-center gap-2 text-xs font-semibold text-muted hover:text-accent"><ArrowLeft size={15}/> Bütün yazışmalar</Link><PageHeader eyebrow="CUSTOMER INTELLIGENCE" title={conv.title} sub="Müştəri davranışı, danışıqdakı əsas siqnallar və əsaslandırılmış tövsiyələr." right={conv.synthetic?<Badge>Demo məlumatı</Badge>:<Badge tone="good">İstifadəçi yazışması</Badge>}/><div className="grid items-start gap-5 xl:grid-cols-[1fr_.72fr]"><div>{conv.status==="done"&&conv.analysis?<AnalysisView conv={conv} actions={actions} onAddAction={r=>setActions(p=>[{id:uid(),title:r.title,problem:r.problem,recommendation:r.recommendation,priority:r.priority,effort:r.effort,impact:r.expectedImpactHypothesis,status:"todo",note:"",sourceConversationId:conv.id,createdAt:new Date().toISOString()},...p])}/>:<Empty title="Söhbət hələ analiz edilməyib" text={conv.error||"Analiz etmək üçün siyahıya qayıdın."} action={<Button href="/customers">Siyahıya qayıt</Button>}/>}</div><aside className="xl:sticky xl:top-7"><Card><div className="flex items-center justify-between gap-3"><h2 className="flex items-center gap-2 font-display text-[16px] font-extrabold"><MessageCircleMore size={19} className="text-accent"/> Orijinal yazışma</h2><Badge>İlkin mənbə</Badge></div><div className="mt-4 max-h-[540px] overflow-auto rounded-xl bg-[#FAF8FB] p-4"><pre className="whitespace-pre-wrap font-sans text-[12px] leading-7 text-ink/90">{conv.text}</pre></div><p className="mt-4 flex items-start gap-2 text-[11px] leading-5 text-muted"><ShieldCheck className="h-4 w-4 shrink-0 text-good"/> AI nəticələri bu yazışmaya əsaslanır. Əsas fərziyyələri həmişə yoxlayın.</p></Card></aside></div></div>;
 }

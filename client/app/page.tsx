@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Check, MessageSquareText, ShieldCheck, Sparkles, Target } from "lucide-react";
 
@@ -5,9 +6,7 @@ export default function Home() {
   return (
     <div className="landing-page min-h-screen w-full overflow-hidden bg-white">
       <header className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 lg:px-10">
-        <Link href="/" className="brand-wordmark text-xl font-extrabold tracking-tight">
-          prodvisor<span className="text-accent">.</span>
-        </Link>
+        <Link href="/" aria-label="Prodvisor ana səhifə"><Image src="/brand/prodvisor-primary.svg" alt="prodvisor." width={784} height={177} priority className="h-auto w-[146px]" /></Link>
         <nav className="hidden items-center gap-8 text-sm font-medium text-muted md:flex">
           <a href="#how-it-works" className="hover:text-ink">Necə işləyir</a>
           <a href="#why-prodvisor" className="hover:text-ink">İmkanlar</a>
@@ -15,7 +14,7 @@ export default function Home() {
         </nav>
         <div className="flex items-center gap-3">
           <Link href="/dashboard" className="hidden rounded-xl px-4 py-2.5 text-sm font-semibold text-ink hover:bg-bg sm:inline-flex">
-            Daxil ol
+            İş sahəsi
           </Link>
           <Link href="/onboarding" className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-dark">
             Başla <ArrowRight className="h-4 w-4" />

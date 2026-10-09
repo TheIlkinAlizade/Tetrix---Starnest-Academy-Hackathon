@@ -1,158 +1,18 @@
 "use client";
-import { useState } from "react";
-import { Check, Copy, Plus, ShieldCheck, ShieldAlert } from "lucide-react";
-import { CONF_LABELS, INTENT_LABELS, OBJECTION_LABELS, PRIORITY_LABELS, STAGE_LABELS } from "@/lib/schemas";
-import type { ActionItem, Conversation } from "@/lib/types";
-import { Badge, Button, Card } from "./ui";
-
-export default function AnalysisView({
-  conv, actions, onAddAction,
-}: { conv: Conversation; actions: ActionItem[]; onAddAction: (a: NonNullable<Conversation["analysis"]>["recommendedActions"][number]) => void }) {
-  const a = conv.analysis!;
-  const meta = conv.meta;
-  const [copied, setCopied] = useState(false);
-  const missing = new Set(meta?.evidence.missing ?? []);
-
-  const Evidence = ({ text }: { text: string }) =>
-    !text.trim() ? null : (
-      <blockquote className="mt-1.5 flex items-start gap-2 rounded-lg border-l-2 border-accent bg-bg px-3 py-2 text-sm">
-        <span className="flex-1">“{text}”</span>
-        {missing.has(text) ? (
-          <span title="Bu sitat dialoqda sözbəsöz tapılmadı" className="inline-flex shrink-0 items-center gap-1 text-xs text-warn"><ShieldAlert className="h-3.5 w-3.5" aria-hidden />tapılmadı</span>
-        ) : (
-          <span title="Sitat dialoqda sözbəsöz tapıldı" className="inline-flex shrink-0 items-center gap-1 text-xs text-good"><ShieldCheck className="h-3.5 w-3.5" aria-hidden />dialoqda var</span>
-        )}
-      </blockquote>
-    );
-
-  const conf = (c: "low" | "medium" | "high") => <Badge tone={c === "high" ? "good" : c === "medium" ? "accent" : "warn"}>etibarlılıq: {CONF_LABELS[c]}</Badge>;
-  const added = (title: string) => actions.some((x) => x.title === title && x.sourceConversationId === conv.id);
-
-  return (
-    <div className="space-y-4">
-      <Card>
-        <p className="text-sm">{a.summary}</p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <Badge tone="accent">Niyyət: {INTENT_LABELS[a.intent]}</Badge>
-          <Badge tone="accent">Mərhələ: {STAGE_LABELS[a.journeyStage]}</Badge>
-          {a.objections.length === 0 ? <Badge>Etiraz aşkar edilmədi</Badge> : a.objections.map((o, i) => <Badge key={i} tone="warn">Etiraz: {OBJECTION_LABELS[o.type]}</Badge>)}
-        </div>
-        <Evidence text={a.stageEvidence} />
-        {meta && (
-          <p className="mt-3 text-xs text-muted">
-            Analiz {(meta.ms / 1000).toFixed(1)} san çəkdi. Sübut yoxlaması: {meta.evidence.found}/{meta.evidence.total} sitat dialoqda tapıldı.
-            {meta.maskedCount > 0 && ` ${meta.maskedCount} şəxsi məlumat (telefon/e-poçt/kart) modelə göndərilməzdən əvvəl maskalandı.`}
-          </p>
-        )}
-      </Card>
-
-      {a.objections.length > 0 && (
-        <Card>
-          <h2 className="text-base font-semibold">Müştəri etirazları</h2>
-          <ul className="mt-3 space-y-3">
-            {a.objections.map((o, i) => (
-              <li key={i}>
-                <div className="flex flex-wrap items-center gap-2"><span className="text-sm font-medium">{OBJECTION_LABELS[o.type]}</span>{conf(o.confidence)}</div>
-                <Evidence text={o.evidence} />
-              </li>
-            ))}
-          </ul>
-        </Card>
-      )}
-
-      <Card>
-        <h2 className="text-base font-semibold">Satış söhbətinin təhlili</h2>
-        <div className="mt-3 grid gap-4 md:grid-cols-2">
-          {([
-            ["Düzgün edilənlər", a.sellerAnalysis.didWell, "good"],
-            ["Həddən artıq ümumi olanlar", a.sellerAnalysis.tooGeneric, "warn"],
-            ["Qaçırılmış fürsətlər", a.sellerAnalysis.missedOpportunities, "warn"],
-          ] as const).map(([title, items, tone]) => (
-            <div key={title}>
-              <Badge tone={tone}>{title}</Badge>
-              <ul className="mt-2 space-y-1 text-sm">
-                {items.length === 0 ? <li className="text-muted">Qeyd edilməyib</li> : items.map((x, i) => <li key={i}>{x}</li>)}
-              </ul>
-            </div>
-          ))}
-          <div>
-            <Badge tone={a.sellerAnalysis.unanswered.length ? "bad" : "good"}>Cavabsız qalan suallar</Badge>
-            {a.sellerAnalysis.unanswered.length === 0 ? (
-              <p className="mt-2 text-sm text-muted">Cavabsız sual aşkar edilmədi</p>
-            ) : (
-              <ul className="mt-2 space-y-2 text-sm">
-                {a.sellerAnalysis.unanswered.map((u, i) => (<li key={i}><span className="font-medium">{u.question}</span><Evidence text={u.evidence} /></li>))}
-              </ul>
-            )}
-          </div>
-        </div>
-      </Card>
-
-      {a.possibleIssues.length > 0 && (
-        <Card>
-          <h2 className="text-base font-semibold">Aşkar edilən problemlər</h2>
-          <ul className="mt-3 space-y-4">
-            {a.possibleIssues.map((p, i) => (
-              <li key={i} className="rounded-xl border border-line p-3.5">
-                <div className="flex flex-wrap items-center gap-2"><span className="text-sm font-medium">{p.issue}</span>{conf(p.confidence)}</div>
-                <Evidence text={p.evidence} />
-                <p className="mt-2 text-sm"><span className="text-muted">Alternativ izah: </span>{p.alternativeExplanation}</p>
-                <p className="mt-1 text-sm"><span className="text-muted">Tövsiyə: </span>{p.recommendedStep}</p>
-              </li>
-            ))}
-          </ul>
-        </Card>
-      )}
-
-      <Card>
-        <h2 className="text-base font-semibold">Satışın baş tutmama səbəbi</h2>
-        {a.lostSaleReason ? (
-          <div className="mt-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <p className="text-sm">{a.lostSaleReason.reason}</p>
-              {conf(a.lostSaleReason.confidence)}
-              {a.lostSaleReason.isSpeculative && <Badge tone="warn">ehtimal</Badge>}
-            </div>
-            <Evidence text={a.lostSaleReason.evidence} />
-          </div>
-        ) : (
-          <p className="mt-2 text-sm text-muted">Dialoqda səbəbi göstərən sübut yoxdur. Uydurma səbəb yazılmadı.</p>
-        )}
-      </Card>
-
-      <Card>
-        <h2 className="text-base font-semibold">Müştəriyə təklif olunan cavab</h2>
-        <p className="mt-2 whitespace-pre-wrap rounded-xl bg-bg p-3.5 text-sm">{a.suggestedReply}</p>
-        <div className="mt-3 flex flex-wrap items-center gap-3">
-          <Button variant="secondary" onClick={async () => { await navigator.clipboard.writeText(a.suggestedReply); setCopied(true); setTimeout(() => setCopied(false), 1800); }}>
-            {copied ? <Check className="h-4 w-4" aria-hidden /> : <Copy className="h-4 w-4" aria-hidden />}{copied ? "Kopyalandı" : "Kopyala"}
-          </Button>
-          <span className="text-xs text-muted">Mesaj avtomatik göndərilmir. Göndərməzdən əvvəl yoxlayın.</span>
-        </div>
-      </Card>
-
-      <Card>
-        <h2 className="text-base font-semibold">Tövsiyə olunan addımlar</h2>
-        <ul className="mt-3 space-y-3">
-          {a.recommendedActions.map((r, i) => (
-            <li key={i} className="rounded-xl border border-line p-3.5">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-sm font-medium">{r.title}</span>
-                <Badge tone={r.priority === "high" ? "bad" : r.priority === "medium" ? "warn" : "neutral"}>Prioritet: {PRIORITY_LABELS[r.priority]}</Badge>
-                <Badge>İcra çətinliyi: {PRIORITY_LABELS[r.effort]}</Badge>
-              </div>
-              <p className="mt-1.5 text-sm"><span className="text-muted">Problem: </span>{r.problem}</p>
-              <p className="mt-1 text-sm"><span className="text-muted">Tövsiyə: </span>{r.recommendation}</p>
-              <p className="mt-1 text-sm"><span className="text-muted">Gözlənilən təsir (hipotez): </span>{r.expectedImpactHypothesis}</p>
-              <div className="mt-2.5">
-                {added(r.title) ? <Badge tone="good"><Check className="h-3 w-3" aria-hidden /> Tapşırıqlara əlavə edilib</Badge> : (
-                  <Button variant="secondary" onClick={() => onAddAction(r)}><Plus className="h-4 w-4" aria-hidden /> Tapşırığa əlavə et</Button>
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
-      </Card>
-    </div>
-  );
+import {useState} from "react";
+import {AlertTriangle,ArrowRight,Check,CheckCircle2,Clipboard,Copy,Lightbulb,MessageCircleMore,Plus,ShieldAlert,ShieldCheck,Sparkles,Target,TriangleAlert} from "lucide-react";
+import {CONF_LABELS,INTENT_LABELS,OBJECTION_LABELS,PRIORITY_LABELS,STAGE_LABELS} from "@/lib/schemas";
+import type {ActionItem,Conversation} from "@/lib/types";
+import {Badge,Button,Card} from "./ui";
+export default function AnalysisView({conv,actions,onAddAction}:{conv:Conversation;actions:ActionItem[];onAddAction:(a:NonNullable<Conversation["analysis"]>["recommendedActions"][number])=>void}){
+ const a=conv.analysis!,meta=conv.meta,[copied,setCopied]=useState(false);const missing=new Set(meta?.evidence.missing??[]);const added=(title:string)=>actions.some(x=>x.title===title&&x.sourceConversationId===conv.id);
+ const evidence=(text:string)=>!text?.trim()?null:<div className="mt-2 rounded-xl border-l-[3px] border-[#AA8EF1] bg-[#F7F3FD] px-3.5 py-3"><p className="text-[12px] leading-6">“{text}”</p><p className={`mt-2 flex items-center gap-1 text-[10px] font-semibold ${missing.has(text)?"text-warn":"text-good"}`}>{missing.has(text)?<ShieldAlert size={12}/>:<ShieldCheck size={12}/>} {missing.has(text)?"Sitat dialoqda tapılmadı":"Dialoqda doğrulandı"}</p></div>;
+ return <div className="space-y-4"><div className="rounded-[20px] border border-[#DED0F7] bg-[#F7F2FF] p-5 sm:p-6"><div className="flex flex-wrap items-center justify-between gap-2"><span className="inline-flex items-center gap-2 text-[12px] font-extrabold text-accent-dark"><Sparkles size={17}/> AI-nin ümumi nəticəsi</span><Badge tone="accent">Business DNA ilə təhlil</Badge></div><h2 className="mt-4 font-display text-lg font-extrabold leading-snug">{a.summary}</h2><div className="mt-4 flex flex-wrap gap-2"><Badge tone="accent">Niyyət: {INTENT_LABELS[a.intent]}</Badge><Badge tone="accent">Mərhələ: {STAGE_LABELS[a.journeyStage]}</Badge>{a.objections.length? a.objections.map((o,i)=><Badge tone="warn" key={i}>{OBJECTION_LABELS[o.type]} etirazı</Badge>):<Badge>Etiraz yoxdur</Badge>}</div>{meta&&<p className="mt-4 text-[11px] leading-5 text-muted">Analiz müddəti: {(meta.ms/1000).toFixed(1)} san · Sitatların {meta.evidence.found}/{meta.evidence.total}-i dialoqda tapılıb{meta.maskedCount?` · ${meta.maskedCount} həssas məlumat maskalanıb`:""}.</p>}</div>
+ {a.objections.length>0&&<Card><div className="mb-4 flex items-center gap-2"><AlertTriangle size={18} className="text-[#AE7933]"/><h3 className="font-display text-[16px] font-extrabold">Aşkar edilən müştəri etirazları</h3></div><div className="space-y-4">{a.objections.map((o,i)=><div key={i} className="border-b border-line pb-4 last:border-0 last:pb-0"><div className="flex flex-wrap items-center gap-2"><p className="text-[13px] font-bold">{OBJECTION_LABELS[o.type]}</p><Badge tone={o.confidence==="high"?"good":o.confidence==="medium"?"accent":"warn"}>Etibarlılıq: {CONF_LABELS[o.confidence]}</Badge></div>{evidence(o.evidence)}</div>)}</div></Card>}
+ <Card><div className="mb-4 flex items-center gap-2"><Target size={18} className="text-accent"/><h3 className="font-display text-[16px] font-extrabold">Satış söhbətinin qiymətləndirilməsi</h3></div><div className="grid gap-5 sm:grid-cols-2"><div><p className="text-xs font-extrabold text-good">Nə yaxşı edildi?</p><ul className="mt-3 space-y-2">{a.sellerAnalysis.didWell.length?a.sellerAnalysis.didWell.map((v,i)=><li className="flex gap-2 text-[12px] leading-6" key={i}><CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-good"/>{v}</li>):<li className="text-xs text-muted">Qeyd yoxdur.</li>}</ul></div><div><p className="text-xs font-extrabold text-[#9F6D21]">Nəyi yaxşılaşdırmaq olar?</p><ul className="mt-3 space-y-2">{[...a.sellerAnalysis.tooGeneric,...a.sellerAnalysis.missedOpportunities].length?[...a.sellerAnalysis.tooGeneric,...a.sellerAnalysis.missedOpportunities].map((v,i)=><li className="flex gap-2 text-[12px] leading-6" key={i}><Lightbulb className="mt-1 h-4 w-4 shrink-0 text-[#AD7F36]"/>{v}</li>):<li className="text-xs text-muted">Qeyd yoxdur.</li>}</ul></div></div>{a.sellerAnalysis.unanswered.length>0&&<div className="mt-5 rounded-xl bg-[#FFF8ED] p-4"><p className="text-xs font-extrabold text-warn">Cavabsız qalan suallar</p>{a.sellerAnalysis.unanswered.map((u,i)=><div className="mt-3" key={i}><p className="text-[13px] font-semibold">{u.question}</p>{evidence(u.evidence)}</div>)}</div>}</Card>
+ {a.possibleIssues.length>0&&<Card><div className="mb-4 flex items-center gap-2"><TriangleAlert size={18} className="text-[#A97A34]"/><h3 className="font-display text-[16px] font-extrabold">Mümkün problemlər və səbəblər</h3></div><div className="space-y-3">{a.possibleIssues.map((p,i)=><div key={i} className="rounded-xl border border-line p-4"><div className="flex flex-wrap gap-2"><p className="text-[13px] font-bold">{p.issue}</p><Badge tone={p.confidence==="high"?"good":p.confidence==="medium"?"accent":"warn"}>{CONF_LABELS[p.confidence]}</Badge></div>{evidence(p.evidence)}<p className="mt-3 text-xs leading-6 text-muted"><strong className="text-ink">Başqa mümkün izah: </strong>{p.alternativeExplanation}</p><p className="mt-1 text-xs leading-6 text-muted"><strong className="text-ink">Tövsiyə: </strong>{p.recommendedStep}</p></div>)}</div></Card>}
+ {a.lostSaleReason&&<Card><h3 className="font-display text-[15px] font-extrabold">Satışın mümkün baş tutmama səbəbi</h3><div className="mt-2 flex flex-wrap items-center gap-2"><p className="text-[13px] leading-6">{a.lostSaleReason.reason}</p>{a.lostSaleReason.isSpeculative&&<Badge tone="warn">Yalnız ehtimal</Badge>}</div>{evidence(a.lostSaleReason.evidence)}<p className="mt-3 text-xs text-muted">Müştərinin həqiqi qərarını təsdiqləmədən bunu qəti səbəb saymaq olmaz.</p></Card>}
+ <Card className="!border-[#DCD1F5]"><div className="mb-4 flex items-center gap-2"><span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#F2ECFF] text-accent"><MessageCircleMore size={17}/></span><h3 className="font-display text-[16px] font-extrabold">Təklif edilən cavab</h3></div><p className="whitespace-pre-wrap rounded-xl bg-[#F7F4FC] px-4 py-4 text-[13px] leading-7">{a.suggestedReply}</p><div className="mt-4 flex flex-wrap items-center gap-3"><Button onClick={async()=>{try{await navigator.clipboard.writeText(a.suggestedReply);setCopied(true);setTimeout(()=>setCopied(false),1900)}catch{setCopied(false)}}}><Copy size={15}/> {copied?"Kopyalandı":"Cavabı kopyala"}</Button><p className="text-[11px] text-muted">Mesaj avtomatik göndərilmir. Göndərməzdən əvvəl yoxlayın.</p></div></Card>
+ <Card><div className="mb-5 flex items-center justify-between gap-3"><div className="flex items-center gap-2"><Lightbulb size={18} className="text-accent"/><h3 className="font-display text-[16px] font-extrabold">Növbəti addımlar</h3></div><Badge tone="accent">{a.recommendedActions.length} tövsiyə</Badge></div><div className="space-y-3">{a.recommendedActions.map((r,i)=><div key={i} className="rounded-xl border border-[#EDE8F2] bg-white p-4"><div className="flex flex-wrap items-center gap-2"><p className="text-[13px] font-bold">{r.title}</p><Badge tone={r.priority==="high"?"bad":r.priority==="medium"?"warn":"neutral"}>{PRIORITY_LABELS[r.priority]} prioritet</Badge></div><p className="mt-2 text-[12px] leading-6 text-muted">{r.recommendation}</p><p className="mt-1 text-[11px] leading-5 text-muted"><strong>Gözlənilən təsir (hipotez): </strong>{r.expectedImpactHypothesis}</p><div className="mt-3">{added(r.title)?<Badge tone="good"><Check size={13}/> Fəaliyyət planına əlavə edilib</Badge>:<Button variant="secondary" className="!min-h-9 !px-3 !text-xs" onClick={()=>onAddAction(r)}><Plus size={14}/> Plana əlavə et</Button>}</div></div>)}</div></Card>
+ </div>;
 }

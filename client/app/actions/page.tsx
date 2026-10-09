@@ -1,59 +1,13 @@
 "use client";
-import { ActionItem, ActionStatus } from "@/lib/types";
-import { KEYS, useStored } from "@/lib/store";
-import { PRIORITY_LABELS } from "@/lib/schemas";
-import { Badge, Button, Card, Empty, PageHeader } from "@/components/ui";
-import { Trash2 } from "lucide-react";
+import {useState} from "react";
 import Link from "next/link";
-
-const COLS: { key: ActionStatus; label: string }[] = [
-  { key: "todo", label: "To Do" },
-  { key: "doing", label: "In Progress" },
-  { key: "done", label: "Done" },
-];
-
-export default function ActionsPage() {
-  const [items, setItems, ready] = useStored<ActionItem[]>(KEYS.actions, []);
-  if (!ready) return null;
-  const patch = (id: string, p: Partial<ActionItem>) => setItems((prev) => prev.map((a) => (a.id === id ? { ...a, ...p } : a)));
-
-  return (
-    <>
-      <PageHeader title="Tapşırıqlar" sub="Analizlərdən gələn tövsiyələr burada işə çevrilir. Tamamladıqdan sonra müşahidənizi yazın, məsləhətçi bunu növbəti cavablarda nəzərə alacaq." />
-      {items.length === 0 ? (
-        <Empty title="Hələ tapşırıq yoxdur" text="Müştəri söhbətini analiz edin və tövsiyələrdən birini tapşırığa əlavə edin." action={<Button href="/customers">Müştərilərə keç</Button>} />
-      ) : (
-        <div className="grid gap-4 lg:grid-cols-3">
-          {COLS.map((col) => (
-            <div key={col.key}>
-              <h2 className="mb-2 flex items-center gap-2 text-sm font-semibold">{col.label}<Badge>{items.filter((a) => a.status === col.key).length}</Badge></h2>
-              <div className="space-y-3">
-                {items.filter((a) => a.status === col.key).map((a) => (
-                  <Card key={a.id} className="!p-4">
-                    <div className="flex items-start justify-between gap-2">
-                      <h3 className="text-sm font-medium">{a.title}</h3>
-                      <button onClick={() => setItems((p) => p.filter((x) => x.id !== a.id))} aria-label="Tapşırığı sil" className="rounded-lg p-1 text-muted hover:bg-bg hover:text-bad"><Trash2 className="h-4 w-4" aria-hidden /></button>
-                    </div>
-                    <div className="mt-2 flex flex-wrap gap-1.5">
-                      <Badge tone={a.priority === "high" ? "bad" : a.priority === "medium" ? "warn" : "neutral"}>Prioritet: {PRIORITY_LABELS[a.priority]}</Badge>
-                      <Badge>Çətinlik: {PRIORITY_LABELS[a.effort]}</Badge>
-                    </div>
-                    <p className="mt-2 text-sm"><span className="text-muted">Problem: </span>{a.problem}</p>
-                    <p className="mt-1 text-sm"><span className="text-muted">Tövsiyə: </span>{a.recommendation}</p>
-                    <p className="mt-1 text-xs text-muted">Gözlənilən təsir (hipotez): {a.impact}</p>
-                    {a.sourceConversationId && <Link href={`/customers/${a.sourceConversationId}`} className="mt-1 inline-block text-xs text-accent-dark hover:underline">Mənbə söhbət</Link>}
-                    <label className="mt-3 block text-xs font-medium text-muted" htmlFor={`n-${a.id}`}>İcra nəticəsi / müşahidə</label>
-                    <textarea id={`n-${a.id}`} value={a.note} onChange={(e) => patch(a.id, { note: e.target.value })} rows={2} placeholder="Nə dəyişdi? Müştəri necə cavab verdi?" className="mt-1 w-full resize-none rounded-lg border border-line p-2 text-sm focus:border-accent focus:outline-none" />
-                    <div className="mt-2 flex gap-1.5">
-                      {COLS.filter((c) => c.key !== a.status).map((c) => <Button key={c.key} variant="secondary" className="!px-3 !py-1.5 !text-xs" onClick={() => patch(a.id, { status: c.key })}>{c.label}</Button>)}
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </>
-  );
+import {ArrowRight,Check,CheckCircle2,ClipboardList,Lightbulb,Link2,Trash2} from "lucide-react";
+import {ActionItem,ActionStatus} from "@/lib/types";
+import {KEYS,useStored} from "@/lib/store";
+import {PRIORITY_LABELS} from "@/lib/schemas";
+import {Badge,Button,Card,Empty,PageHeader} from "@/components/ui";
+const statuses:{key:ActionStatus;label:string}[]=[{key:"todo",label:"Gözləyir"},{key:"doing",label:"İcra olunur"},{key:"done",label:"Tamamlanıb"}];
+export default function ActionsPage(){const [items,setItems,ready]=useStored<ActionItem[]>(KEYS.actions,[]),[filter,setFilter]=useState<"all"|ActionStatus>("all");if(!ready)return <div className="skeleton h-56 rounded-2xl"/>;const patch=(id:string,p:Partial<ActionItem>)=>setItems(prev=>prev.map(a=>a.id===id?{...a,...p}:a));const visible=items.filter(a=>filter==="all"||a.status===filter);
+ return <div className="space-y-6"><PageHeader eyebrow="TÖVSİYƏDƏN NƏTİCƏYƏ" title="Fəaliyyət planınız" sub="AI tövsiyələrini konkret tapşırıqlara çevirin. Nəyi dəyişdirdiyinizi və nəticəsini qeyd edin." right={<Button href="/customers">Yeni analiz <ArrowRight size={15}/></Button>}/><div className="grid gap-3 sm:grid-cols-3">{[{label:"Bütün tapşırıqlar",value:items.length,icon:ClipboardList,shade:"bg-[#F1ECFD] text-accent"},{label:"İcra gözləyən",value:items.filter(x=>x.status!=="done").length,icon:Lightbulb,shade:"bg-[#FFF5E9] text-[#AB772E]"},{label:"Tamamlanmış",value:items.filter(x=>x.status==="done").length,icon:CheckCircle2,shade:"bg-[#E9F7EF] text-[#258367]"}].map(m=><Card key={m.label} className="!p-4 sm:!p-5"><div className="flex items-center gap-4"><span className={`flex h-11 w-11 items-center justify-center rounded-xl ${m.shade}`}><m.icon size={20}/></span><div><p className="text-[11px] font-bold text-muted">{m.label}</p><p className="mt-1 font-display text-2xl font-extrabold">{m.value}</p></div></div></Card>)}</div>
+ {items.length===0?<Empty title="Hələ fəaliyyət planınız yoxdur" text="Müştəri yazışmasını analiz edin, faydalı tövsiyəni seçin və onu burada izləyin." action={<Button href="/customers">Söhbət analiz et <ArrowRight size={16}/></Button>}/>:<Card className="!p-0"><div className="flex flex-wrap gap-2 border-b border-line px-5 py-4">{[{key:"all",label:"Hamısı"},...statuses].map(s=><button key={s.key} onClick={()=>setFilter(s.key as "all"|ActionStatus)} className={`rounded-full px-3.5 py-2 text-xs font-bold transition ${filter===s.key?"bg-accent text-white":"bg-[#F8F6FA] text-muted hover:bg-lilac"}`}>{s.label} <span className="ml-1 opacity-70">{s.key==="all"?items.length:items.filter(x=>x.status===s.key).length}</span></button>)}</div><div className="divide-y divide-line">{visible.map(a=><div key={a.id} className="flex flex-col gap-3 px-5 py-5 sm:px-6"><div className="flex items-start gap-3"><button title="Tamamlanmanı dəyiş" aria-label="Tapşırığı tamamla" onClick={()=>patch(a.id,{status:a.status==="done"?"todo":"done"})} className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border ${a.status==="done"?"border-good bg-good text-white":"border-[#D6CBDD] bg-white hover:border-accent"}`}>{a.status==="done"&&<Check size={15}/>}</button><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><h3 className={`text-[14px] font-extrabold ${a.status==="done"?"text-muted line-through":""}`}>{a.title}</h3><Badge tone={a.priority==="high"?"bad":a.priority==="medium"?"warn":"neutral"}>{PRIORITY_LABELS[a.priority]} prioritet</Badge></div><p className="mt-2 text-[12px] leading-6 text-muted">{a.recommendation}</p><p className="mt-1 text-[11px] leading-5 text-muted">Gözlənilən təsir (hipotez): {a.impact}</p>{a.sourceConversationId&&<Link href={`/customers/${a.sourceConversationId}`} className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-accent-dark hover:underline"><Link2 size={12}/> Əsaslandığı yazışma</Link>}</div><button onClick={()=>{if(window.confirm("Bu tapşırıq silinsin?"))setItems(p=>p.filter(x=>x.id!==a.id))}} aria-label="Tapşırığı sil" className="icon-btn !h-8 !w-8 text-muted hover:text-bad"><Trash2 size={16}/></button></div><div className="flex flex-col gap-3 pl-9 sm:flex-row sm:items-end"><div className="flex-1"><label htmlFor={`note-${a.id}`} className="text-[11px] font-bold text-muted">İcra zamanı müşahidəniz</label><input id={`note-${a.id}`} value={a.note} onChange={e=>patch(a.id,{note:e.target.value})} className="form-control mt-1 !min-h-[39px] !py-2 !text-xs" placeholder="Müştəri necə reaksiya verdi? Nə dəyişdi?"/></div><label className="text-[11px] font-bold text-muted">Status<select value={a.status} onChange={e=>patch(a.id,{status:e.target.value as ActionStatus})} className="form-control mt-1 !min-h-[39px] !py-2 !text-xs sm:w-[155px]">{statuses.map(s=><option key={s.key} value={s.key}>{s.label}</option>)}</select></label></div></div>)}{visible.length===0&&<p className="px-6 py-12 text-center text-xs text-muted">Bu statusda tapşırıq yoxdur.</p>}</div></Card>}</div>
 }

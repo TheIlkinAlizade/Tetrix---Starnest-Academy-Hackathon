@@ -1,199 +1,35 @@
 "use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight, Check, Compass, RefreshCw, Sparkles, X } from "lucide-react";
-import { APP_NAME, QUESTIONS } from "@/lib/config";
-import { Answers, Profile } from "@/lib/types";
-import { Suggestions, ProfileExtra } from "@/lib/schemas";
-import { KEYS, useStored } from "@/lib/store";
-import { postJSON } from "@/lib/api";
-import { Button, ErrorNote, Spinner } from "@/components/ui";
-import { DEMO_ANSWERS, DEMO_PROFILE, demoConversations } from "@/lib/demo";
-
-export default function Onboarding() {
-  const router = useRouter();
-  const [answers, setAnswers] = useStored<Answers>(KEYS.answers, {});
-  const [, setProfile] = useStored<Profile | null>(KEYS.profile, null);
-  const [, setConvs] = useStored(KEYS.conversations, [] as ReturnType<typeof demoConversations>);
-  const [step, setStep] = useState(0);
-  const [draft, setDraft] = useState("");
-  const [source, setSource] = useState<"user" | "ai" | "ai_edited">("user");
-  const [sugg, setSugg] = useState<Suggestions | null>(null);
-  const [picked, setPicked] = useState<string | null>(null);
-  const [shown, setShown] = useState<string[]>([]);
-  const [loading, setLoading] = useState<"" | "sugg" | "profile">("");
-  const [error, setError] = useState("");
-
-  const q = QUESTIONS[step];
-  const last = step === QUESTIONS.length - 1;
-  const pct = Math.round((step / QUESTIONS.length) * 100);
-
-  function go(next: number) {
-    const target = QUESTIONS[next];
-    setStep(next);
-    setDraft(answers[target.id]?.value ?? "");
-    setSource(answers[target.id]?.source ?? "user");
-    setSugg(null);
-    setPicked(null);
-    setShown([]);
-    setError("");
-  }
-
-  const plain = () => Object.fromEntries(Object.entries(answers).map(([k, v]) => [k, v.value]));
-
-  async function askAI(more = false) {
-    setError("");
-    setLoading("sugg");
-    try {
-      const out = await postJSON<Suggestions>("/api/ai/onboarding-suggestions", {
-        question: { id: q.id, text: q.text },
-        answers: plain(),
-        avoid: more ? shown : [],
-      });
-      setSugg(out);
-      setPicked(null);
-      setShown((s) => [...s, ...out.suggestions]);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Xəta baş verdi");
-    } finally {
-      setLoading("");
-    }
-  }
-
-  function pick(text: string) {
-    setPicked(text);
-    setDraft(text);
-    setSource("ai");
-  }
-
-  function onEdit(v: string) {
-    setDraft(v);
-    if (source === "ai" && v !== picked) setSource("ai_edited");
-  }
-
-  async function next() {
-    if (!draft.trim()) {
-      setError("Davam etmək üçün cavab yazın və ya AI-dan kömək istəyin.");
-      return;
-    }
-    const merged: Answers = { ...answers, [q.id]: { value: draft.trim(), source } };
-    setAnswers(merged);
-    if (!last) return go(step + 1);
-    await finish(merged);
-  }
-
-  async function finish(a: Answers) {
-    setError("");
-    setLoading("profile");
-    try {
-      const plainA = Object.fromEntries(Object.entries(a).map(([k, v]) => [k, v.value]));
-      const extra = await postJSON<ProfileExtra>("/api/ai/business-profile", { answers: plainA });
-      const p: Profile = {
-        name: a.name.value, industry: extra.industry, product: a.product.value,
-        customerProblem: a.problem.value, valueProp: a.why.value, differentiators: extra.differentiators,
-        audience: a.audience.value, pricing: a.pricing.value, goals: a.goal.value, challenges: a.challenge.value,
-        unknowns: extra.unknowns,
-        status: {
-          name: "confirmed", product: "confirmed", customerProblem: "confirmed", valueProp: "confirmed",
-          audience: "confirmed", pricing: "confirmed", goals: "confirmed", challenges: "confirmed",
-          industry: "needs_review", differentiators: "needs_review", unknowns: "needs_review",
-        },
-        updatedAt: new Date().toISOString(),
-      };
-      setProfile(p);
-      router.push("/business");
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Profil yaradıla bilmədi");
-      setLoading("");
-    }
-  }
-
-  function loadDemo() {
-    setAnswers(DEMO_ANSWERS);
-    setProfile({ ...DEMO_PROFILE, updatedAt: new Date().toISOString() });
-    setConvs(demoConversations());
-    router.push("/dashboard");
-  }
-
-  return (
-    <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-2xl flex-col justify-center py-6">
-      <div className="mb-8 flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent text-white"><Compass className="h-5 w-5" aria-hidden /></span>
-          <span className="text-base font-semibold">{APP_NAME}</span>
-        </div>
-        <button onClick={loadDemo} className="text-sm text-muted underline-offset-4 hover:text-ink hover:underline">
-          Sintetik demo biznesi ilə başla
-        </button>
-      </div>
-
-      <div className="mb-2 flex justify-between text-sm text-muted">
-        <span>Sual {step + 1} / {QUESTIONS.length}</span>
-        <span>{pct}%</span>
-      </div>
-      <div className="mb-8 h-1.5 overflow-hidden rounded-full bg-line" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
-        <div className="h-full rounded-full bg-accent transition-all" style={{ width: `${pct}%` }} />
-      </div>
-
-      <h1 className="text-3xl font-semibold tracking-tight">{q.text}</h1>
-      <p className="mt-2 text-muted">{q.hint}</p>
-
-      <textarea
-        value={draft}
-        onChange={(e) => onEdit(e.target.value)}
-        rows={4}
-        placeholder={q.placeholder}
-        aria-label={q.text}
-        className="mt-6 w-full resize-none rounded-2xl border border-line bg-white p-4 text-base shadow-card placeholder:text-muted/70 focus:border-accent focus:outline-none"
-      />
-
-      {source !== "user" && draft && (
-        <p className="mt-2 text-xs text-muted">Bu cavab AI təklifi əsasında yazılıb. Göndərməzdən əvvəl real vəziyyətə uyğunluğunu yoxlayın.</p>
-      )}
-
-      {sugg && (
-        <div className="mt-5 rounded-2xl border border-accent/25 bg-accent-soft p-4">
-          <p className="text-sm text-accent-dark">{sugg.intro}</p>
-          <ul className="mt-3 space-y-2">
-            {sugg.suggestions.map((s) => (
-              <li key={s}>
-                <button
-                  onClick={() => pick(s)}
-                  aria-pressed={picked === s}
-                  className={`flex w-full items-start gap-3 rounded-xl border bg-white p-3 text-left text-sm transition-colors ${picked === s ? "border-accent" : "border-line hover:border-accent/50"}`}
-                >
-                  <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${picked === s ? "border-accent bg-accent text-white" : "border-line"}`}>
-                    {picked === s && <Check className="h-3 w-3" aria-hidden />}
-                  </span>
-                  {s}
-                </button>
-              </li>
-            ))}
-          </ul>
-          <p className="mt-3 text-sm font-medium text-accent-dark">{sugg.confirmQuestion}</p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <Button variant="ghost" onClick={() => { setSugg(null); setPicked(null); }}><X className="h-4 w-4" aria-hidden /> Rədd et</Button>
-            <Button variant="ghost" onClick={() => askAI(true)} disabled={loading === "sugg"}><RefreshCw className="h-4 w-4" aria-hidden /> Başqa təkliflər</Button>
-          </div>
-          <p className="mt-2 text-xs text-muted">Seçdiyiniz təklif yuxarıdakı xanaya düşür. Redaktə edə bilərsiniz.</p>
-        </div>
-      )}
-
-      {error && <div className="mt-4"><ErrorNote>{error}</ErrorNote></div>}
-
-      <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-        <Button variant="secondary" onClick={() => askAI(false)} disabled={loading !== ""}>
-          <Sparkles className="h-4 w-4" aria-hidden /> Fikrim yoxdur, AI kömək etsin
-        </Button>
-        <div className="flex items-center gap-2">
-          {loading === "sugg" && <Spinner label="Təkliflər hazırlanır" />}
-          {loading === "profile" && <Spinner label="Biznes profili yaradılır" />}
-          {step > 0 && <Button variant="ghost" onClick={() => go(step - 1)} disabled={loading !== ""}><ArrowLeft className="h-4 w-4" aria-hidden /> Geri</Button>}
-          <Button onClick={next} disabled={loading !== ""}>
-            {last ? "Biznes profilini yarat" : "Növbəti"} <ArrowRight className="h-4 w-4" aria-hidden />
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
+import {useState} from "react";
+import Image from "next/image";
+import Link from "next/link";
+import {useRouter} from "next/navigation";
+import {ArrowLeft,ArrowRight,Check,CheckCircle2,Lightbulb,RefreshCw,ShieldCheck,Sparkles,X} from "lucide-react";
+import {QUESTIONS} from "@/lib/config";
+import {Answers,Profile} from "@/lib/types";
+import {Suggestions,ProfileExtra} from "@/lib/schemas";
+import {KEYS,useStored} from "@/lib/store";
+import {postJSON} from "@/lib/api";
+import {Button,ErrorNote,Spinner} from "@/components/ui";
+import {DEMO_ANSWERS,DEMO_PROFILE,demoConversations} from "@/lib/demo";
+export default function Onboarding(){
+ const router=useRouter();const [answers,setAnswers]=useStored<Answers>(KEYS.answers,{});const [,setProfile]=useStored<Profile|null>(KEYS.profile,null);const [,setConvs]=useStored(KEYS.conversations,[] as ReturnType<typeof demoConversations>);
+ const [step,setStep]=useState(0),[draft,setDraft]=useState(""),[source,setSource]=useState<"user"|"ai"|"ai_edited">("user"),[sugg,setSugg]=useState<Suggestions|null>(null),[picked,setPicked]=useState<string|null>(null),[shown,setShown]=useState<string[]>([]),[loading,setLoading]=useState<""|"sugg"|"profile">(""),[error,setError]=useState("");
+ const q=QUESTIONS[step],last=step===QUESTIONS.length-1,pct=Math.round(step/QUESTIONS.length*100);
+ function go(n:number,latest?:Answers){const next=QUESTIONS[n];const base=latest||answers;setStep(n);setDraft(base[next.id]?.value??"");setSource(base[next.id]?.source??"user");setSugg(null);setPicked(null);setShown([]);setError("");}
+ async function askAI(more=false){setLoading("sugg");setError("");try{const a=Object.fromEntries(Object.entries(answers).map(([k,v])=>[k,v.value]));if(draft.trim())a[q.id]=draft.trim();const out=await postJSON<Suggestions>("/api/ai/onboarding-suggestions",{question:{id:q.id,text:q.text},answers:a,avoid:more?shown:[]});setSugg(out);setPicked(null);setShown(s=>[...s,...out.suggestions]);}catch(e){setError(e instanceof Error?e.message:"AI təklifi hazırlana bilmədi");}finally{setLoading("");}}
+ function select(s:string){setPicked(s);setDraft(s);setSource("ai");}function edit(s:string){setDraft(s);if(source==="ai"&&s!==picked)setSource("ai_edited");}
+ async function next(){if(!draft.trim())return setError("Davam etmək üçün cavab yazın və ya AI-dən təklif istəyin.");const merged:Answers={...answers,[q.id]:{value:draft.trim(),source}};setAnswers(merged);if(!last)return go(step+1,merged);setLoading("profile");setError("");try{const plain=Object.fromEntries(Object.entries(merged).map(([k,v])=>[k,v.value]));const extra=await postJSON<ProfileExtra>("/api/ai/business-profile",{answers:plain});const p:Profile={name:merged.name.value,industry:extra.industry,product:merged.product.value,customerProblem:merged.problem.value,valueProp:merged.why.value,differentiators:extra.differentiators,audience:merged.audience.value,pricing:merged.pricing.value,goals:merged.goal.value,challenges:merged.challenge.value,unknowns:extra.unknowns,status:{name:"confirmed",product:"confirmed",customerProblem:"confirmed",valueProp:"confirmed",audience:"confirmed",pricing:"confirmed",goals:"confirmed",challenges:"confirmed",industry:"needs_review",differentiators:"needs_review",unknowns:"needs_review"},updatedAt:new Date().toISOString()};setProfile(p);router.push("/business");}catch(e){setError(e instanceof Error?e.message:"Profil yaradıla bilmədi");setLoading("");}}
+ function loadDemo(){setAnswers(DEMO_ANSWERS);setProfile({...DEMO_PROFILE,updatedAt:new Date().toISOString()});setConvs(demoConversations());router.push("/dashboard");}
+ return <div className="min-h-screen bg-[#F9F7FC]"><div className="mx-auto max-w-[1260px] px-5 sm:px-9"><header className="flex h-[92px] items-center justify-between"><Link href="/" aria-label="Ana səhifə"><Image src="/brand/prodvisor-primary.svg" alt="prodvisor." width={784} height={177} className="h-auto w-[145px]" priority/></Link><button onClick={loadDemo} className="rounded-full border border-[#E9E1F4] bg-white px-3 py-2 text-[12px] font-semibold text-accent-dark transition hover:border-accent/40">Sintetik demo ilə bax <ArrowRight className="ml-1 inline h-3.5 w-3.5"/></button></header>
+ <div className="grid min-h-[calc(100vh-92px)] items-center gap-14 pb-16 pt-4 lg:grid-cols-[1fr_.82fr] lg:gap-20"><div className="max-w-[650px]"><div className="mb-7 flex items-center justify-between gap-4"><p className="label-eyebrow text-accent">BİZNESİNİZİ TANIYAQ</p><span className="text-xs font-bold text-muted">{step+1} / {QUESTIONS.length}</span></div><div className="mb-9 h-1.5 overflow-hidden rounded-full bg-[#E8E1F1]" role="progressbar" aria-label="İrəliləyiş" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}><div className="h-full rounded-full bg-accent transition-all duration-300" style={{width:`${pct}%`}}/></div>
+ <h1 className="max-w-[640px] font-display text-[30px] font-extrabold leading-[1.23] tracking-[-.05em] sm:text-[43px]">{q.text}</h1><p className="mt-4 text-[14px] leading-7 text-muted">{q.hint}</p>
+ <label className="mt-9 block text-[12px] font-bold" htmlFor="answer">Sizin cavabınız</label><textarea id="answer" autoFocus rows={4} value={draft} onChange={e=>edit(e.target.value)} placeholder={q.placeholder} className="form-control mt-2 !min-h-[155px] resize-y !rounded-2xl !bg-white !p-4 !text-[15px]"/>
+ {source!=="user"&&draft&&<p className="mt-2 text-xs text-muted"><ShieldCheck className="mr-1 inline h-3.5 w-3.5"/> Bu AI təklifidir. Biznesinizə uyğunluğunu yoxlayın.</p>}
+ <div className="mt-4 rounded-2xl border border-[#E9E1F9] bg-[#F1EBFD]/70 p-4 sm:p-5"><div className="flex flex-wrap items-center justify-between gap-3"><div className="flex items-center gap-2.5"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white text-accent"><Sparkles size={18}/></span><div><p className="text-[13px] font-extrabold">Cavabı bilmirsiniz?</p><p className="mt-0.5 text-[11px] text-muted">Prodvisor sizə fikirlər təklif etsin.</p></div></div><Button variant="secondary" disabled={loading!==""} onClick={()=>askAI(false)} className="!bg-white !text-accent-dark"><Lightbulb size={15}/> AI təklif etsin</Button></div>
+ {sugg&&<div className="mt-4 space-y-2"><p className="text-xs leading-5 text-muted">{sugg.intro}</p>{sugg.suggestions.map((s,i)=><button key={i} aria-pressed={picked===s} onClick={()=>select(s)} className={`flex w-full items-start gap-3 rounded-xl border bg-white p-3.5 text-left text-[13px] leading-6 transition ${picked===s?"border-accent ring-2 ring-accent/10":"border-[#E9E3F1] hover:border-[#C8B9EE]"}`}><span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${picked===s?"border-accent bg-accent text-white":"border-[#D7CBDD]"}`}>{picked===s&&<Check size={13}/>}</span><span className="flex-1">{s}</span></button>)}<div className="flex flex-wrap items-center justify-between gap-2 pt-1"><span className="text-[11px] text-muted">İstənilən təklifi redaktə edə bilərsiniz.</span><button onClick={()=>askAI(true)} disabled={loading!==""} className="inline-flex items-center gap-1.5 text-xs font-bold text-accent-dark"><RefreshCw size={13}/> Başqa təkliflər</button></div></div>}
+ {loading==="sugg"&&<div className="mt-3"><Spinner label="Sizin biznesinizə uyğun fikirlər hazırlanır..."/></div>}</div>
+ {error&&<div className="mt-4"><ErrorNote>{error}</ErrorNote></div>}
+ <div className="mt-6 flex items-center justify-between gap-3"><Button variant="ghost" disabled={step===0||loading!==""} onClick={()=>go(step-1)}><ArrowLeft size={16}/> Geri</Button><div className="flex items-center gap-3">{loading==="profile"&&<Spinner label="Profil yaradılır"/>}<Button disabled={loading!==""} onClick={next}>{last?"Profili yarat":"Davam et"}<ArrowRight size={16}/></Button></div></div>
+ </div>
+ <aside className="hidden lg:block"><div className="soft-gradient relative overflow-hidden rounded-[32px] border border-[#E9E0F8] p-10 xl:p-12"><div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full border-[40px] border-white/40"/><div className="relative"><span className="inline-flex items-center gap-2 rounded-full border border-white bg-white/75 px-3 py-1.5 text-[11px] font-bold text-accent-dark"><Sparkles size={14}/> Sizin AI biznes tərəfdaşınız</span><h2 className="mt-10 font-display text-[33px] font-extrabold leading-[1.2]">Hər böyük biznes<br/><span className="text-accent">doğru sualla</span> başlayır.</h2><p className="mt-5 max-w-sm text-[13px] leading-7 text-[#6D637D]">Biznesiniz haqqında bildiklərinizi paylaşın. Bilmədiyiniz hissələrdə sizə kömək edək.</p><div className="mt-10 space-y-3">{[{title:"Məhsulunuzu anlayırıq",sub:"Nə təklif etdiyinizi öyrənirik."},{title:"Müştərilərinizi tanıyırıq",sub:"Kimə və niyə satdığınızı dəqiqləşdiririk."},{title:"Birlikdə addım atırıq",sub:"Fərdi tövsiyələr və real fəaliyyət planı."}].map((x,i)=><div key={i} className="flex items-center gap-3 rounded-2xl border border-white/70 bg-white/65 p-4"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#E9DEFC] text-accent"><CheckCircle2 size={17}/></span><div><p className="text-[13px] font-extrabold">{x.title}</p><p className="mt-0.5 text-xs text-muted">{x.sub}</p></div></div>)}</div></div></div><p className="mt-5 text-center text-xs text-muted">Təxminən 3 dəqiqə · Cavablarınızı sonradan dəyişə bilərsiniz.</p></aside></div></div></div>;
 }

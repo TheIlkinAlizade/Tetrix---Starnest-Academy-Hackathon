@@ -1,104 +1,19 @@
 "use client";
-import { useState } from "react";
+import {useState} from "react";
 import Link from "next/link";
-import { ChevronRight, FlaskConical, Play } from "lucide-react";
-import { Conversation, Profile } from "@/lib/types";
-import { KEYS, uid, useStored } from "@/lib/store";
-import { analyzeConversation } from "@/lib/analyze";
-import { demoConversations } from "@/lib/demo";
-import { Badge, Button, Card, Empty, ErrorNote, PageHeader, Spinner } from "@/components/ui";
-import { INTENT_LABELS, OBJECTION_LABELS, STAGE_LABELS } from "@/lib/schemas";
-
-export default function CustomersPage() {
-  const [convs, setConvs, ready] = useStored<Conversation[]>(KEYS.conversations, []);
-  const [profile] = useStored<Profile | null>(KEYS.profile, null);
-  const [title, setTitle] = useState("");
-  const [text, setText] = useState("");
-  const [error, setError] = useState("");
-  const [busy, setBusy] = useState<string | null>(null);
-
-  async function run(id: string, body: string) {
-    setBusy(id);
-    setError("");
-    setConvs((p) => p.map((c) => (c.id === id ? { ...c, status: "analyzing", error: undefined } : c)));
-    try {
-      const out = await analyzeConversation(body, profile);
-      setConvs((p) => p.map((c) => (c.id === id ? { ...c, status: "done", analysis: out.analysis, meta: out.meta } : c)));
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : "Analiz uğursuz oldu";
-      setConvs((p) => p.map((c) => (c.id === id ? { ...c, status: "error", error: msg } : c)));
-      setError(msg);
-    } finally {
-      setBusy(null);
-    }
-  }
-
-  async function submit() {
-    if (text.trim().length < 10) return setError("Yazışma çox qısadır. Müştəri ilə söhbəti tam yapışdırın.");
-    const c: Conversation = { id: uid(), title: title.trim() || `Söhbət ${convs.length + 1}`, text: text.trim(), createdAt: new Date().toISOString(), status: "new" };
-    setConvs((p) => [c, ...p]);
-    setTitle("");
-    setText("");
-    await run(c.id, c.text);
-  }
-
-  if (!ready) return null;
-
-  return (
-    <>
-      <PageHeader title="Müştəri söhbətləri" sub="Müştəri ilə yazışmanı yapışdırın. Telefon, e-poçt və kart nömrələri analizdən əvvəl avtomatik maskalanır." />
-
-      <Card>
-        <label htmlFor="t" className="text-sm font-medium">Başlıq (istəyə bağlı)</label>
-        <input id="t" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Məsələn: Şam dəsti sorğusu" className="mt-1.5 w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm focus:border-accent focus:outline-none" />
-        <label htmlFor="c" className="mt-4 block text-sm font-medium">Yazışma</label>
-        <textarea id="c" value={text} onChange={(e) => setText(e.target.value)} rows={8} placeholder={"Müştəri: Salam, qiymət nə qədərdir?\nSatıcı: Salam, 45 AZN-dir."} className="mt-1.5 w-full resize-y rounded-xl border border-line bg-white p-3.5 text-sm focus:border-accent focus:outline-none" />
-        {!profile && <p className="mt-2 text-xs text-warn">Biznes profili yoxdur. Analiz ümumi kontekstlə aparılacaq. <Link href="/onboarding" className="underline">Profil yarat</Link></p>}
-        {error && <div className="mt-3"><ErrorNote>{error}</ErrorNote></div>}
-        <div className="mt-4 flex flex-wrap items-center gap-3">
-          <Button onClick={submit} disabled={busy !== null}><Play className="h-4 w-4" aria-hidden /> Analiz et</Button>
-          {busy && <Spinner label="Söhbət analiz edilir, 10–20 saniyə çəkə bilər" />}
-          <Button variant="ghost" onClick={() => setConvs((p) => [...demoConversations().filter((d) => !p.some((x) => x.id === d.id)), ...p])}>
-            <FlaskConical className="h-4 w-4" aria-hidden /> Sintetik nümunələri əlavə et
-          </Button>
-        </div>
-      </Card>
-
-      <h2 className="mb-3 mt-8 text-base font-semibold">Analiz tarixçəsi</h2>
-      {convs.length === 0 ? (
-        <Empty title="Hələ söhbət yoxdur" text="Yuxarıda ilk yazışmanı analiz edin və ya sintetik nümunələri əlavə edin." />
-      ) : (
-        <ul className="space-y-2.5">
-          {convs.map((c) => (
-            <li key={c.id}>
-              <Card className="flex flex-wrap items-center justify-between gap-3 !p-4">
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="truncate text-sm font-medium">{c.title}</span>
-                    {c.synthetic && <Badge>sintetik</Badge>}
-                    {c.status === "done" && c.analysis && (
-                      <>
-                        <Badge tone="accent">{INTENT_LABELS[c.analysis.intent]}</Badge>
-                        <Badge tone="accent">{STAGE_LABELS[c.analysis.journeyStage]}</Badge>
-                        {c.analysis.objections.map((o, i) => <Badge key={i} tone="warn">{OBJECTION_LABELS[o.type]}</Badge>)}
-                      </>
-                    )}
-                    {c.status === "error" && <Badge tone="bad">xəta</Badge>}
-                    {c.status === "analyzing" && <Spinner label="analiz edilir" />}
-                  </div>
-                  <p className="mt-1 line-clamp-1 text-xs text-muted">{c.text.replace(/\n/g, " ")}</p>
-                  {c.status === "error" && c.error && <p className="mt-1 text-xs text-bad">{c.error}</p>}
-                </div>
-                {c.status === "done" ? (
-                  <Link href={`/customers/${c.id}`} className="inline-flex items-center gap-1 text-sm font-medium text-accent-dark hover:underline">Nəticəyə bax <ChevronRight className="h-4 w-4" aria-hidden /></Link>
-                ) : c.status !== "analyzing" ? (
-                  <Button variant="secondary" disabled={busy !== null} onClick={() => run(c.id, c.text)}>Analiz et</Button>
-                ) : null}
-              </Card>
-            </li>
-          ))}
-        </ul>
-      )}
-    </>
-  );
+import {ArrowRight,CalendarDays,ChevronRight,FileText,FlaskConical,LockKeyhole,MessageCircleMore,MessagesSquare,Plus,Sparkles} from "lucide-react";
+import {Conversation,Profile} from "@/lib/types";
+import {KEYS,uid,useStored} from "@/lib/store";
+import {analyzeConversation} from "@/lib/analyze";
+import {demoConversations} from "@/lib/demo";
+import {Badge,Button,Card,Empty,ErrorNote,PageHeader,SectionHeader,Spinner} from "@/components/ui";
+import {INTENT_LABELS,OBJECTION_LABELS,STAGE_LABELS} from "@/lib/schemas";
+export default function CustomersPage(){const [convs,setConvs,ready]=useStored<Conversation[]>(KEYS.conversations,[]);const [profile]=useStored<Profile|null>(KEYS.profile,null);const [title,setTitle]=useState(""),[text,setText]=useState(""),[error,setError]=useState(""),[busy,setBusy]=useState<string|null>(null),[formOpen,setFormOpen]=useState(true);
+ async function run(id:string,body:string){setBusy(id);setError("");setConvs(p=>p.map(c=>c.id===id?{...c,status:"analyzing",error:undefined}:c));try{const out=await analyzeConversation(body,profile);setConvs(p=>p.map(c=>c.id===id?{...c,status:"done",analysis:out.analysis,meta:out.meta}:c));setFormOpen(false);}catch(e){const msg=e instanceof Error?e.message:"Analiz uğursuz oldu";setConvs(p=>p.map(c=>c.id===id?{...c,status:"error",error:msg}:c));setError(msg);}finally{setBusy(null);}}
+ async function submit(){if(text.trim().length<10)return setError("Zəhmət olmasa, müştəri yazışmasını tam daxil edin.");const c:Conversation={id:uid(),title:title.trim()||`Söhbət ${convs.length+1}`,text:text.trim(),createdAt:new Date().toISOString(),status:"new"};setConvs(p=>[c,...p]);setTitle("");setText("");await run(c.id,c.text);}
+ if(!ready)return <div className="skeleton h-52 rounded-2xl"/>;
+ return <div className="space-y-6"><PageHeader eyebrow="CUSTOMER INTELLIGENCE" title="Müştərilərinizi daha yaxşı anlayın." sub="Yazışmaları analiz edin, müştəri etirazlarını və mümkün satış maneələrini konkret sübutlarla görün." right={<Button onClick={()=>{setFormOpen(!formOpen);window.scrollTo({top:0,behavior:"smooth"})}}><Plus size={16}/> Yeni analiz</Button>}/>
+ {formOpen&&<div className="grid gap-4 lg:grid-cols-[1.32fr_.68fr]"><Card className="!p-0"><div className="flex items-center gap-3 border-b border-line px-5 py-5 sm:px-6"><span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#F0EBFC] text-accent"><MessageCircleMore size={20}/></span><div><h2 className="font-display text-[17px] font-extrabold">Yeni müştəri yazışması</h2><p className="mt-0.5 text-xs text-muted">Müştərinin və satıcının mesajlarını olduğu kimi əlavə edin.</p></div></div><div className="p-5 sm:p-6"><label htmlFor="conversation-title" className="text-xs font-bold">Söhbətin adı <span className="font-normal text-muted">(istəyə bağlı)</span></label><input id="conversation-title" value={title} onChange={e=>setTitle(e.target.value)} placeholder="Məsələn, Instagram — qiymət haqqında sual" className="form-control mt-2"/><label htmlFor="conversation-text" className="mt-5 block text-xs font-bold">Yazışma mətni</label><textarea id="conversation-text" value={text} onChange={e=>setText(e.target.value)} rows={8} placeholder={'Müştəri: Salam, qiyməti nə qədərdir?\nSatıcı: Salam, 45 AZN-dir.\nMüştəri: Çatdırılma neçə günə olur?'} className="form-control mt-2 min-h-[205px] resize-y !leading-7"/><div className="mt-3 flex items-start gap-2 rounded-xl bg-[#F8F6FB] px-3.5 py-3"><LockKeyhole size={15} className="mt-0.5 shrink-0 text-accent"/><p className="text-[11px] leading-5 text-muted">Telefon, e-poçt və kart məlumatları modelə göndərilməzdən əvvəl maskalanır. Yenə də şəxsi məlumatları əvvəlcədən silməyiniz tövsiyə olunur.</p></div>{!profile&&<p className="mt-3 text-xs text-warn">Biznes DNA yoxdur. Daha uyğun nəticə üçün <Link href="/onboarding" className="underline">profilinizi yaradın</Link>.</p>}{error&&<div className="mt-3"><ErrorNote>{error}</ErrorNote></div>}<div className="mt-5 flex flex-wrap items-center gap-3"><Button disabled={busy!==null||!text.trim()} onClick={submit}><Sparkles size={16}/> {busy?"Analiz edilir...":"AI ilə analiz et"}<ArrowRight size={15}/></Button>{busy&&<Spinner label="Söhbət təhlil edilir"/>}</div></div></Card>
+ <div className="flex flex-col gap-4"><div className="soft-gradient rounded-[20px] border border-[#E8DFFA] p-6"><span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-accent"><Sparkles size={20}/></span><h3 className="mt-6 font-display text-xl font-extrabold">Söhbətin içində nə gizlənir?</h3><p className="mt-3 text-[13px] leading-7 text-[#726783]">Prodvisor müştərinin nə istədiyini, hansı sualların cavabsız qaldığını və satıcının nəyi yaxşılaşdıra biləcəyini göstərir.</p><div className="mt-5 space-y-3">{["Müştəri niyyəti və etirazlar","Yazışmadan birbaşa sübutlar","Təklif edilən cavab və addımlar"].map(s=><div key={s} className="flex items-center gap-2 text-[12px] font-semibold"><span className="h-1.5 w-1.5 rounded-full bg-accent"/>{s}</div>)}</div></div><button onClick={()=>{setConvs(p=>[...demoConversations().filter(d=>!p.some(x=>x.id===d.id)),...p]);setFormOpen(false);}} className="flex items-center justify-between rounded-[18px] border border-[#EBE6EF] bg-white p-4 text-left hover:border-[#CBB8F2]"><span className="flex items-center gap-3"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F1EBFB] text-accent"><FlaskConical size={19}/></span><span><span className="block text-[13px] font-bold">Nümunə söhbətlərə bax</span><span className="mt-1 block text-xs text-muted">Sintetik demo dialoqları əlavə et</span></span></span><ChevronRight size={17} className="text-accent"/></button></div></div>}
+ <section><SectionHeader title={`Yazışma tarixçəsi ${convs.length?`(${convs.length})`:""}`}/>{convs.length===0?<Empty title="Hələ analiz tarixçəniz yoxdur" text="İlk müştəri söhbətini əlavə edin və müştəriləriniz haqqında konkret nəticələr əldə edin."/>:<Card className="!p-0"><div className="divide-y divide-line">{[...convs].sort((a,b)=>b.createdAt.localeCompare(a.createdAt)).map(c=><div key={c.id} className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6"><div className="flex min-w-0 items-start gap-3"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#F2ECFF] text-accent"><MessagesSquare size={18}/></span><div className="min-w-0"><div className="flex flex-wrap items-center gap-2"><p className="text-[13px] font-bold">{c.title}</p>{c.synthetic&&<Badge>Demo</Badge>}{c.status==="done"?<Badge tone="good">Analiz tamamlandı</Badge>:c.status==="error"?<Badge tone="bad">Xəta</Badge>:c.status==="analyzing"?<Badge tone="accent">Davam edir</Badge>:<Badge>Gözləyir</Badge>}</div><p className="mt-1 line-clamp-1 text-xs leading-5 text-muted">{c.analysis?.summary||c.text.replace(/\n/g," ")}</p><p className="mt-1.5 flex items-center gap-1 text-[11px] text-[#9B92A4]"><CalendarDays size={12}/>{new Date(c.createdAt).toLocaleDateString("az-AZ")}{c.analysis?.objections?.length?` · ${c.analysis.objections.map(o=>OBJECTION_LABELS[o.type]).join(", ")}`:""}</p>{c.error&&<p className="mt-1 text-xs text-bad">{c.error}</p>}</div></div><div className="flex shrink-0 items-center justify-end">{c.status==="done"?<Button href={`/customers/${c.id}`} variant="secondary">Nəticəyə bax <ArrowRight size={14}/></Button>:c.status!=="analyzing"?<Button variant="secondary" disabled={busy!==null} onClick={()=>run(c.id,c.text)}>Analiz et <ArrowRight size={14}/></Button>:<Spinner label="Analiz edilir"/>}</div></div>)}</div></Card>}</section></div>
 }

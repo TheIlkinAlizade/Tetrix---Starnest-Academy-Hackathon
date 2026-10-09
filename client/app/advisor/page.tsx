@@ -1,99 +1,20 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
-import { Send } from "lucide-react";
-import { ActionItem, ChatMessage, Conversation, Profile } from "@/lib/types";
-import { KEYS, useStored } from "@/lib/store";
-import { postJSON } from "@/lib/api";
-import { buildInsights } from "@/lib/insights";
-import { FIELD_LABELS } from "@/lib/config";
-import { Badge, Button, Card, Empty, ErrorNote, PageHeader, Spinner } from "@/components/ui";
-
-const STARTERS = [
-  "Məhsulumu necə daha yaxşı təqdim edim?",
-  "Qiymətim yüksək görünürsə, bunu necə əsaslandırım?",
-  "Biznesimdə ən böyük üç problem nə ola bilər?",
-  "Bu həftə hansı kampaniyanı test edə bilərəm?",
-];
-
-export default function AdvisorPage() {
-  const [profile, , ready] = useStored<Profile | null>(KEYS.profile, null);
-  const [convs] = useStored<Conversation[]>(KEYS.conversations, []);
-  const [actions] = useStored<ActionItem[]>(KEYS.actions, []);
-  const [msgs, setMsgs] = useStored<ChatMessage[]>(KEYS.chat, []);
-  const [input, setInput] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
-  const end = useRef<HTMLDivElement>(null);
-
-  useEffect(() => { end.current?.scrollIntoView({ behavior: "smooth" }); }, [msgs, busy]);
-
-  async function send(text: string) {
-    const t = text.trim();
-    if (!t || busy) return;
-    setError("");
-    setInput("");
-    const next = [...msgs, { role: "user" as const, content: t }];
-    setMsgs(next);
-    setBusy(true);
-    try {
-      const out = await postJSON<{ reply: string }>("/api/ai/advisor", { messages: next, profile, insights: buildInsights(convs, actions) });
-      setMsgs([...next, { role: "assistant", content: out.reply }]);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Cavab alına bilmədi");
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  if (!ready) return null;
-  if (!profile) return (<><PageHeader title="Məsləhətçi" /><Empty title="Əvvəl biznesinizi tanıdın" text="Məsləhətçi yalnız biznes profilinizə əsasən cavab verir." action={<Button href="/onboarding">Onboarding-ə başla</Button>} /></>);
-
-  const known = (["product", "audience", "pricing", "goals", "challenges"] as const).map((k) => ({ k, v: profile[k] }));
-
-  return (
-    <>
-      <PageHeader title="Fərdi məsləhətçi" sub={`${profile.name} üçün Biznes DNA və son analizlər əsasında cavab verir.`} />
-      <div className="grid gap-4 lg:grid-cols-[1fr_20rem]">
-        <Card className="flex min-h-[32rem] flex-col !p-0">
-          <div className="flex-1 space-y-4 overflow-y-auto p-5" aria-live="polite">
-            {msgs.length === 0 && (
-              <div>
-                <p className="text-sm text-muted">Sualınızı yazın və ya aşağıdakılardan birini seçin.</p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {STARTERS.map((s) => <button key={s} onClick={() => send(s)} className="rounded-full border border-line bg-white px-3.5 py-1.5 text-sm text-ink hover:border-accent/50 hover:bg-accent-soft">{s}</button>)}
-                </div>
-              </div>
-            )}
-            {msgs.map((m, i) => (
-              <div key={i} className={m.role === "user" ? "flex justify-end" : "flex"}>
-                <div className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm ${m.role === "user" ? "bg-ink text-white" : "border border-line bg-bg"}`}>{m.content}</div>
-              </div>
-            ))}
-            {busy && <Spinner label="Cavab hazırlanır" />}
-            {error && <ErrorNote>{error}</ErrorNote>}
-            <div ref={end} />
-          </div>
-          <form onSubmit={(e) => { e.preventDefault(); send(input); }} className="flex items-center gap-2 border-t border-line p-3">
-            <input value={input} onChange={(e) => setInput(e.target.value)} placeholder="Biznesiniz haqqında soruşun" aria-label="Sual" className="flex-1 rounded-full border border-line bg-white px-4 py-2.5 text-sm focus:border-accent focus:outline-none" />
-            <button type="submit" disabled={busy || !input.trim()} aria-label="Göndər" className="flex h-10 w-10 items-center justify-center rounded-full bg-ink text-white disabled:opacity-40"><Send className="h-4 w-4" aria-hidden /></button>
-          </form>
-        </Card>
-        <aside className="space-y-4">
-          <Card>
-            <h2 className="text-base font-semibold">Məsləhətçinin bildikləri</h2>
-            <ul className="mt-3 space-y-3 text-sm">
-              {known.map(({ k, v }) => (
-                <li key={k}>
-                  <div className="flex items-center gap-1.5 text-xs text-muted">{FIELD_LABELS[k]} {profile.status[k] === "needs_review" && <Badge tone="warn">yoxlanılmalıdır</Badge>}</div>
-                  <p className="line-clamp-2">{v}</p>
-                </li>
-              ))}
-            </ul>
-            {profile.unknowns.length > 0 && <p className="mt-3 text-xs text-muted">Hələ məlum olmayan: {profile.unknowns.length} məqam</p>}
-          </Card>
-          {msgs.length > 0 && <Button variant="ghost" onClick={() => setMsgs([])}>Söhbəti təmizlə</Button>}
-        </aside>
-      </div>
-    </>
-  );
+import {useEffect,useRef,useState} from "react";
+import Link from "next/link";
+import {ArrowRight,BrainCircuit,CheckCircle2,ChevronRight,Lightbulb,MessageCircleMore,Send,Sparkles,Trash2} from "lucide-react";
+import {ActionItem,ChatMessage,Conversation,Profile} from "@/lib/types";
+import {KEYS,useStored} from "@/lib/store";
+import {postJSON} from "@/lib/api";
+import {buildInsights} from "@/lib/insights";
+import {FIELD_LABELS} from "@/lib/config";
+import {Badge,Button,Card,Empty,ErrorNote,PageHeader,Spinner} from "@/components/ui";
+const STARTERS=["Məhsulumu rəqiblərdən necə fərqləndirim?","Müştəri qiymətə etiraz edəndə nə deyim?","Biznesimdə ilk nəyi yaxşılaşdırmalıyam?","Mənə real kampaniya strategiyası hazırla."];
+export default function AdvisorPage(){const [profile,,ready]=useStored<Profile|null>(KEYS.profile,null),[convs]=useStored<Conversation[]>(KEYS.conversations,[]),[actions]=useStored<ActionItem[]>(KEYS.actions,[]),[msgs,setMsgs]=useStored<ChatMessage[]>(KEYS.chat,[]);const [input,setInput]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState("");const end=useRef<HTMLDivElement>(null);useEffect(()=>{end.current?.scrollIntoView({behavior:"smooth",block:"nearest"})},[msgs,busy]);
+ async function send(text:string){const t=text.trim();if(!t||busy)return;setError("");setInput("");const next=[...msgs,{role:"user" as const,content:t}];setMsgs(next);setBusy(true);try{const out=await postJSON<{reply:string}>("/api/ai/advisor",{messages:next,profile,insights:buildInsights(convs,actions)});setMsgs([...next,{role:"assistant",content:out.reply}]);}catch(e){setError(e instanceof Error?e.message:"AI cavabı hazırlana bilmədi");}finally{setBusy(false);}}
+ if(!ready)return <div className="skeleton h-56 rounded-2xl"/>;if(!profile)return <><PageHeader title="AI Məsləhətçi" sub="Sizə özəl məsləhətlər üçün əvvəlcə biznesinizi tanıyaq."/><Empty title="İlk olaraq biznesinizi tanıyaq" text="Məsləhətçiniz məhsulunuzu, hədəf auditoriyanızı və məqsədinizi öyrəndikdən sonra cavabları fərdiləşdirəcək." action={<Button href="/onboarding">Biznesimi tanıt <ArrowRight size={16}/></Button>}/></>;
+ return <div><PageHeader eyebrow="SİZİN ŞƏXSİ TƏRƏFDAŞINIZ" title="AI Məsləhətçiniz" sub={`${profile.name} üçün fərdi strategiya, məsləhət və böyümə ideyaları.`}/><div className="grid items-start gap-5 xl:grid-cols-[1fr_325px]"><div className="surface-card flex min-h-[640px] flex-col overflow-hidden !p-0"><div className="flex items-center justify-between border-b border-line px-5 py-4 sm:px-6"><div className="flex items-center gap-3"><span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#EDE7FA] text-accent"><Sparkles size={20}/></span><div><p className="text-[13px] font-extrabold">Prodvisor AI</p><p className="mt-0.5 flex items-center gap-1.5 text-[11px] text-muted"><span className="h-1.5 w-1.5 rounded-full bg-[#44A88A]"/> Business DNA ilə fərdiləşdirilib</p></div></div>{msgs.length>0&&<button onClick={()=>{if(window.confirm("AI söhbət tarixçəsi təmizlənsin?"))setMsgs([])}} className="icon-btn" title="Söhbəti təmizlə" aria-label="Söhbəti təmizlə"><Trash2 size={17}/></button>}</div>
+ <div className="flex max-h-[670px] min-h-[475px] flex-1 flex-col gap-5 overflow-y-auto px-5 py-6 sm:px-7" aria-live="polite">{msgs.length===0&&<div className="flex flex-1 flex-col justify-center"><div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[22px] bg-[#EEE7FD] text-accent"><BrainCircuit size={30}/></div><h2 className="mt-5 text-center font-display text-[22px] font-extrabold">Bu gün nəyi həll edək?</h2><p className="mx-auto mt-2 max-w-sm text-center text-[13px] leading-6 text-muted">Məhsulunuz, müştəriləriniz, qiymətiniz və satış strategiyanız haqqında sual verin.</p><div className="mx-auto mt-7 grid w-full max-w-[540px] gap-2 sm:grid-cols-2">{STARTERS.map(s=><button key={s} onClick={()=>send(s)} disabled={busy} className="flex items-center justify-between gap-3 rounded-xl border border-[#EAE5F0] bg-white p-4 text-left text-[12px] font-semibold leading-5 transition hover:border-[#C9B8F1] hover:bg-[#F9F6FF]"><span>{s}</span><ArrowRight size={15} className="shrink-0 text-accent"/></button>)}</div></div>}
+ {msgs.map((m,i)=><div key={i} className={`flex ${m.role==="user"?"justify-end":"justify-start"}`}><div className={`max-w-[89%] whitespace-pre-wrap rounded-[18px] px-5 py-4 text-[13px] leading-7 ${m.role==="user"?"rounded-tr-md bg-accent text-white":"rounded-tl-md border border-[#EEE6F6] bg-[#FAF8FD]"}`}>{m.content}</div></div>)}{busy&&<div className="self-start rounded-xl bg-[#F7F2FC] px-4 py-3"><Spinner label="Prodvisor cavab hazırlayır..."/></div>}{error&&<ErrorNote>{error}</ErrorNote>}<div ref={end}/></div>
+ <form onSubmit={e=>{e.preventDefault();send(input)}} className="flex items-center gap-3 border-t border-line bg-white px-4 py-4 sm:px-6"><input value={input} onChange={e=>setInput(e.target.value)} placeholder="Prodvisor-dan nə soruşmaq istərdiniz?" aria-label="AI məsləhətçiyə sual" className="form-control flex-1 !rounded-xl"/><button disabled={busy||!input.trim()} type="submit" aria-label="Mesaj göndər" className="flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-xl bg-accent text-white transition hover:bg-accent-dark disabled:opacity-40"><Send size={18}/></button></form></div>
+ <aside className="space-y-4"><Card><div className="mb-4 flex items-center gap-2"><span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#F2ECFF] text-accent"><BrainCircuit size={17}/></span><h3 className="font-display text-[15px] font-extrabold">Məsləhətçiniz nə bilir?</h3></div>{(["product","audience","pricing","goals"] as const).map(k=><div key={k} className="border-b border-line py-3 last:border-0"><p className="text-[11px] font-bold text-muted">{FIELD_LABELS[k]}</p><p className="mt-1 line-clamp-3 text-[12px] leading-6">{profile[k]}</p></div>)}<Link href="/business" className="mt-4 inline-flex items-center gap-1.5 text-[12px] font-bold text-accent-dark">Profili redaktə et <ArrowRight size={14}/></Link></Card><div className="rounded-[19px] border border-[#E9DFF8] bg-[#F4EEFF] p-5"><Lightbulb size={20} className="text-accent"/><h3 className="mt-4 font-display text-[15px] font-extrabold">Daha yaxşı cavab üçün</h3><p className="mt-2 text-xs leading-6 text-muted">Müştəri söhbətlərini analiz etdikcə məsləhətçiniz real etirazları və ehtiyacları da nəzərə alır.</p><Button href="/customers" variant="secondary" className="mt-4 !bg-white">Söhbəti analiz et <ArrowRight size={14}/></Button></div></aside></div></div>
 }

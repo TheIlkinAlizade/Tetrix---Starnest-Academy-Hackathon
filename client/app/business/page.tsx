@@ -1,106 +1,23 @@
 "use client";
-import { useState } from "react";
-import { Check, Pencil, Plus, Trash2 } from "lucide-react";
-import { FIELD_LABELS, FieldKey } from "@/lib/config";
-import { Profile } from "@/lib/types";
-import { KEYS, useStored } from "@/lib/store";
-import { Badge, Button, Card, Empty, PageHeader } from "@/components/ui";
-
-const TEXT_FIELDS: FieldKey[] = ["name", "industry", "product", "customerProblem", "valueProp", "audience", "pricing", "goals", "challenges"];
-const LIST_FIELDS: FieldKey[] = ["differentiators", "unknowns"];
-
-export default function BusinessPage() {
-  const [profile, setProfile, ready] = useStored<Profile | null>(KEYS.profile, null);
-  const [editing, setEditing] = useState<FieldKey | null>(null);
-  const [val, setVal] = useState("");
-
-  if (!ready) return null;
-  if (!profile) {
-    return (
-      <>
-        <PageHeader title="Biznes DNA" />
-        <Empty title="Biznes profili hələ yoxdur" text="Onboarding suallarına cavab verin, sistem biznesinizi tanısın." action={<Button href="/onboarding">Onboarding-ə başla</Button>} />
-      </>
-    );
-  }
-
-  const save = (key: FieldKey, value: string | string[]) =>
-    setProfile({ ...profile, [key]: value, status: { ...profile.status, [key]: "confirmed" }, updatedAt: new Date().toISOString() } as Profile);
-  const approve = (key: FieldKey) => setProfile({ ...profile, status: { ...profile.status, [key]: "confirmed" } });
-
-  function startEdit(key: FieldKey) {
-    const v = profile![key as keyof Profile];
-    setVal(Array.isArray(v) ? (v as string[]).join("\n") : String(v ?? ""));
-    setEditing(key);
-  }
-  function commit(key: FieldKey) {
-    if (LIST_FIELDS.includes(key)) save(key, val.split("\n").map((s) => s.trim()).filter(Boolean));
-    else save(key, val.trim());
-    setEditing(null);
-  }
-
-  const renderField = (k: FieldKey) => {
-    const review = profile.status[k] === "needs_review";
-    const raw = profile[k as keyof Profile];
-    const isList = LIST_FIELDS.includes(k);
-    return (
-      <Card className={review ? "border-warn-line bg-warn-soft/40" : ""}>
-        <div className="flex items-start justify-between gap-2">
-          <h2 className="text-sm font-medium text-muted">{FIELD_LABELS[k]}</h2>
-          <div className="flex items-center gap-1.5">
-            {review && <Badge tone="warn">Yoxlanılmalıdır</Badge>}
-            <button onClick={() => startEdit(k)} aria-label={`${FIELD_LABELS[k]} sahəsini redaktə et`} className="rounded-lg p-1.5 text-muted hover:bg-bg hover:text-ink"><Pencil className="h-4 w-4" aria-hidden /></button>
-          </div>
-        </div>
-        {editing === k ? (
-          <div className="mt-2">
-            <textarea value={val} onChange={(e) => setVal(e.target.value)} rows={isList ? 5 : 3} className="w-full rounded-xl border border-line bg-white p-3 text-sm focus:border-accent focus:outline-none" aria-label={FIELD_LABELS[k]} />
-            {isList && <p className="mt-1 text-xs text-muted">Hər sətirdə bir maddə.</p>}
-            <div className="mt-2 flex gap-2">
-              <Button onClick={() => commit(k)}>Yadda saxla</Button>
-              <Button variant="ghost" onClick={() => setEditing(null)}>Ləğv et</Button>
-            </div>
-          </div>
-        ) : isList ? (
-          <ul className="mt-2 space-y-1.5 text-sm">
-            {(raw as string[]).length === 0 && <li className="text-muted">Hələ əlavə edilməyib</li>}
-            {(raw as string[]).map((x, i) => (
-              <li key={i} className="flex gap-2"><span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" aria-hidden />{x}</li>
-            ))}
-          </ul>
-        ) : (
-          <p className="mt-2 text-sm">{String(raw) || <span className="text-muted">Hələ əlavə edilməyib</span>}</p>
-        )}
-        {review && editing !== k && (
-          <div className="mt-3">
-            <Button variant="secondary" onClick={() => approve(k)}><Check className="h-4 w-4" aria-hidden /> Təsdiqlə</Button>
-          </div>
-        )}
-      </Card>
-    );
-  };
-
-  const reviewCount = [...TEXT_FIELDS, ...LIST_FIELDS].filter((k) => profile.status[k] === "needs_review").length;
-
-  return (
-    <>
-      <PageHeader
-        title="Biznes DNA"
-        sub="Məsləhətçi və müştəri analizi bu məlumatlardan istifadə edir. Sistemi öyrətmək yox, hər sorğuya kontekst vermək məqsədi daşıyır."
-        right={reviewCount > 0 ? <Badge tone="warn">{reviewCount} sahə yoxlanılmalıdır</Badge> : <Badge tone="good">Hamısı təsdiqlənib</Badge>}
-      />
-      <div className="grid gap-4 md:grid-cols-2">
-        {TEXT_FIELDS.map((k) => <div key={k} className={k === "product" || k === "valueProp" ? "md:col-span-2" : ""}>{renderField(k)}</div>)}
-        {LIST_FIELDS.map((k) => <div key={k}>{renderField(k)}</div>)}
-      </div>
-      <div className="mt-6 flex flex-wrap gap-2">
-        <Button href="/customers">Müştəri söhbətini analiz et</Button>
-        <Button variant="secondary" href="/advisor">Məsləhətçidən soruş</Button>
-        <Button variant="danger" onClick={() => { if (confirm("Biznes profili və bütün məlumatlar silinsin?")) { Object.values(KEYS).forEach((k) => localStorage.removeItem(k)); location.href = "/onboarding"; } }}>
-          <Trash2 className="h-4 w-4" aria-hidden /> Hamısını sıfırla
-        </Button>
-      </div>
-      <p className="mt-3 text-xs text-muted"><Plus className="mr-1 inline h-3 w-3" aria-hidden />Məlumatlar yalnız bu brauzerdə saxlanılır.</p>
-    </>
-  );
+import {useState} from "react";
+import Link from "next/link";
+import {ArrowRight,Check,CheckCircle2,Edit3,Fingerprint,Lightbulb,LockKeyhole,Plus,Sparkles,Trash2,TriangleAlert} from "lucide-react";
+import {FIELD_LABELS,FieldKey} from "@/lib/config";
+import {Profile} from "@/lib/types";
+import {KEYS,useStored} from "@/lib/store";
+import {Badge,Button,Card,Empty,PageHeader,SectionHeader} from "@/components/ui";
+const MAIN:FieldKey[]=["name","industry","product","customerProblem","valueProp","audience","pricing","goals","challenges"];
+const SECOND:FieldKey[]=["differentiators","unknowns"];
+export default function BusinessPage(){const [profile,setProfile,ready]=useStored<Profile|null>(KEYS.profile,null);const [editing,setEditing]=useState<FieldKey|null>(null),[val,setVal]=useState("");if(!ready)return <div className="skeleton h-60 rounded-2xl"/>;if(!profile)return <><PageHeader title="Biznes DNA" sub="Biznesinizi Prodvisor-a tanıtdıqdan sonra profiliniz burada görünəcək."/><Empty title="Hələ biznesiniz haqqında məlumat yoxdur" text="Qısa tanışlıqla başlayın. Sonra istədiyiniz sahəni burada yeniləyə bilərsiniz." action={<Button href="/onboarding">Biznesimi tanıt <ArrowRight size={16}/></Button>}/></>;
+ const review=[...MAIN,...SECOND].filter(k=>profile.status[k]==="needs_review");const confirm=(k:FieldKey)=>setProfile({...profile,status:{...profile.status,[k]:"confirmed"},updatedAt:new Date().toISOString()});const save=(k:FieldKey,v:string|string[])=>setProfile({...profile,[k]:v,status:{...profile.status,[k]:"confirmed"},updatedAt:new Date().toISOString()} as Profile);
+ function edit(k:FieldKey){const v=profile![k as keyof Profile];setVal(Array.isArray(v)?(v as string[]).join("\n"):String(v??""));setEditing(k)};
+ function commit(k:FieldKey){save(k,SECOND.includes(k)?val.split("\n").map(s=>s.trim()).filter(Boolean):val.trim());setEditing(null)}
+ const render=(k:FieldKey)=>{const draft=profile.status[k]==="needs_review";const raw=profile[k as keyof Profile];const isArray=SECOND.includes(k);return <div key={k} className="group rounded-xl border border-[#EEE9F2] bg-white px-4 py-3.5 transition hover:border-[#DCCFF2]"><div className="flex items-start justify-between gap-3"><div className="min-w-0 flex-1"><div className="mb-1.5 flex flex-wrap items-center gap-2"><p className="text-[11px] font-bold text-muted">{FIELD_LABELS[k]}</p>{draft&&<Badge tone="warn">Təsdiq gözləyir</Badge>}</div>{editing===k?<div className="mt-2"><textarea autoFocus aria-label={FIELD_LABELS[k]} rows={isArray?4:3} value={val} onChange={e=>setVal(e.target.value)} className="form-control resize-y !text-[13px]"/>{isArray&&<p className="mt-1 text-[11px] text-muted">Hər bənd yeni sətirdə.</p>}<div className="mt-2 flex flex-wrap gap-2"><Button onClick={()=>commit(k)}><Check size={14}/> Yadda saxla</Button><Button variant="ghost" onClick={()=>setEditing(null)}>Ləğv et</Button></div></div>:isArray?<ul className="space-y-1.5">{(raw as string[]).length?(raw as string[]).map((s,i)=><li className="flex gap-2 text-[13px] leading-6" key={i}><span className="mt-[10px] h-1.5 w-1.5 shrink-0 rounded-full bg-accent"/>{s}</li>):<li className="text-xs text-muted">Hələ məlumat əlavə edilməyib.</li>}</ul>:<p className="whitespace-pre-wrap text-[13px] font-medium leading-6">{String(raw)||<span className="font-normal text-muted">Hələ əlavə edilməyib</span>}</p>}{draft&&editing!==k&&<button className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-accent-dark hover:underline" onClick={()=>confirm(k)}><CheckCircle2 size={14}/> Məlumatı təsdiqlə</button>}</div>{editing!==k&&<button aria-label={`${FIELD_LABELS[k]} redaktə et`} title="Redaktə et" onClick={()=>edit(k)} className="icon-btn !h-8 !w-8 shrink-0 group-hover:bg-[#F5F0FF] group-hover:text-accent"><Edit3 size={15}/></button>}</div></div>};
+ return <div className="space-y-6"><PageHeader eyebrow="BİZNES PROFİLİNİZ" title="Biznes DNA" sub="Prodvisor sizi daha yaxından tanıdıqca verdiyi məsləhətlər biznesinizə uyğunlaşır." right={<Badge tone={review.length?"warn":"good"}>{review.length?`${review.length} sahə yoxlanılmalıdır`:"Məlumatlar təsdiqlənib"}</Badge>}/>
+ <div className="grid gap-4 lg:grid-cols-[1.25fr_.75fr]"><Card className="!p-0"><div className="flex items-center gap-3 border-b border-line px-5 py-5 sm:px-6"><span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-lilac text-accent"><Fingerprint size={19}/></span><div><h2 className="font-display text-[17px] font-extrabold">Biznesin əsas məlumatları</h2><p className="mt-0.5 text-xs text-muted">Bu sahələri istənilən vaxt dəyişə bilərsiniz.</p></div></div><div className="grid gap-2.5 p-4 sm:p-5">{MAIN.map(render)}</div></Card>
+ <div className="space-y-4"><div className="soft-gradient rounded-[20px] border border-[#E8DFFA] p-6"><div className="mb-5 flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-accent"><Sparkles size={21}/></div><p className="label-eyebrow text-accent-dark">SİZİN BİZNESİNİZ, BİZİM KONTEKSTİMİZ</p><h2 className="mt-2 font-display text-xl font-extrabold">{profile.name}</h2><p className="mt-3 text-[13px] leading-7 text-[#72657F]">{profile.product}. {profile.valueProp}</p><div className="mt-5 border-t border-[#DECFEE] pt-4"><p className="text-[11px] font-bold text-accent-dark">Əsas məqsəd</p><p className="mt-1 text-[13px] leading-6">{profile.goals}</p></div></div>
+ <Card><div className="mb-4 flex items-center gap-2"><Lightbulb size={18} className="text-accent"/><h2 className="font-display text-base font-extrabold">Fərqləndirən cəhətlər</h2></div>{render("differentiators")}</Card>
+ <Card><div className="mb-4 flex items-center gap-2"><TriangleAlert size={18} className="text-[#B78232]"/><h2 className="font-display text-base font-extrabold">Dəqiqləşdirməli məqamlar</h2></div>{render("unknowns")}<p className="mt-3 text-xs leading-6 text-muted">AI tərəfindən yaradılan fərziyyələri real faktlarla yoxlayın.</p></Card>
+ <Card className="!bg-[#282037] !text-white"><Sparkles size={21} className="text-[#C5B1FF]"/><h2 className="mt-3 font-display text-lg font-extrabold">İndi nə edək?</h2><p className="mt-2 text-[13px] leading-6 text-white/70">Artıq Prodvisor sizin məhsulunuzu tanıyır. Bu məlumatlarla fərdi məsləhətlər almağa başlayın.</p><Link href="/advisor" className="mt-5 inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-xs font-bold text-[#32264A]">AI məsləhətçiyə keç <ArrowRight size={15}/></Link></Card></div></div>
+ <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-[#ECE6F1] bg-white px-5 py-4"><p className="flex items-center gap-2 text-xs text-muted"><LockKeyhole size={15}/> Bu versiyada profiliniz yalnız cari brauzerdə saxlanılır.</p><button className="inline-flex items-center gap-1.5 text-xs font-semibold text-bad hover:underline" onClick={()=>{if(window.confirm("Biznes profili və bütün saxlanmış məlumatlar silinsin?")){Object.values(KEYS).forEach(k=>localStorage.removeItem(k));window.location.href="/onboarding";}}}><Trash2 size={14}/> Bütün məlumatları sıfırla</button></div></div>
 }
