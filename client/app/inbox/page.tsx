@@ -1,7 +1,7 @@
 "use client";
 import { useRef,useState } from "react";
 import Link from "next/link";
-import { AlertTriangle, ArrowDownToLine, ArrowLeft, ArrowRight, Check, CheckCheck, ChevronLeft, CircleCheck, Clipboard, FileJson, Filter, Inbox, Instagram, Loader2, MessageCircle, MessagesSquare, Plus, Search, Send, Settings2, Sparkles, Upload, X } from "lucide-react";
+import { AlertTriangle, ArrowDownToLine, ArrowLeft, ArrowRight, Check, CheckCheck, ChevronLeft, CircleCheck, Clipboard, FileJson, Filter, Inbox, Camera, Loader2, MessageCircle, MessagesSquare, Plus, Search, Send, Settings2, Sparkles, Upload, X } from "lucide-react";
 import { analyzeConversation } from "@/lib/analyze";
 import { KEYS, useStored, uid } from "@/lib/store";
 import { Conversation, Profile } from "@/lib/types";
@@ -10,7 +10,7 @@ import type { Analysis } from "@/lib/schemas";
 import {OBJECTION_LABELS} from "@/lib/schemas";
 
 const channels:Record<InboxChannel,string>={instagram:"Instagram",messenger:"Messenger",whatsapp:"WhatsApp (demo)",web:"Web / import"};
-function ChannelIcon({channel}:{channel:InboxChannel}) {return channel==="instagram"?<Instagram size={14}/>:channel==="messenger"?<MessagesSquare size={14}/>:<MessageCircle size={14}/>}
+function ChannelIcon({channel}:{channel:InboxChannel}) {return channel==="instagram"?<Camera size={14}/>:channel==="messenger"?<MessagesSquare size={14}/>:<MessageCircle size={14}/>}
 export default function InboxPage(){
  const [threads,setThreads,ready]=useStored<InboxThread[]>("prodvisor.inbox.v3",EXAMPLE_THREADS);
  const [analyses,setAnalyses]=useStored<Record<string,Analysis>>("prodvisor.inbox.analyses.v3",{});
