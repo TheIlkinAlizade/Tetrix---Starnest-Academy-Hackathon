@@ -52,3 +52,8 @@ To deploy on Vercel: import this folder as a Next.js application; set `GEMINI_AP
 ## Build verification caveat
 
 The project was statically checked for TypeScript/TSX syntax. Package installation and a full Next.js build require access to the NPM registry; if unavailable, run `npm ci && npm run typecheck && npm run build` in a connected development environment before deployment.
+
+---
+
+## v3 redesign notes
+Read [`README_V3.md`](README_V3.md) for new scroll-interactive landing page, pricing/subscription planning, business-facing landing, Instagram/Messenger-inspired demo inbox, limitations and deployment instructions. Read [`META_INTEGRATION_GUIDE.md`](META_INTEGRATION_GUIDE.md) for official channel integration requirements.

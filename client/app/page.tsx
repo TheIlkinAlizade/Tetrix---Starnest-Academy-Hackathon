@@ -1,152 +1,45 @@
-import Image from "next/image";
+"use client";
 import Link from "next/link";
-import { ArrowRight, Check, MessageSquareText, ShieldCheck, Sparkles, Target } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import { ArrowDown, ArrowRight, ArrowUpRight, Check, CheckCircle2, ChevronRight, Command, Fingerprint, Menu, MessageCircle, MousePointer2, MoveUpRight, Play, Radar, ScanSearch, Sparkles, Target, X } from "lucide-react";
 
-export default function Home() {
-  return (
-    <div className="landing-page min-h-screen w-full overflow-hidden bg-white">
-      <header className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 lg:px-10">
-        <Link href="/" aria-label="Prodvisor ana səhifə"><Image src="/brand/prodvisor-primary.svg" alt="prodvisor." width={784} height={177} priority className="h-auto w-[146px]" /></Link>
-        <nav className="hidden items-center gap-8 text-sm font-medium text-muted md:flex">
-          <a href="#how-it-works" className="hover:text-ink">Necə işləyir</a>
-          <a href="#why-prodvisor" className="hover:text-ink">İmkanlar</a>
-          <Link href="/eval" className="hover:text-ink">Keyfiyyət testləri</Link>
-        </nav>
-        <div className="flex items-center gap-3">
-          <Link href="/dashboard" className="hidden rounded-xl px-4 py-2.5 text-sm font-semibold text-ink hover:bg-bg sm:inline-flex">
-            İş sahəsi
-          </Link>
-          <Link href="/onboarding" className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-dark">
-            Başla <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
-      </header>
-
-      <section className="relative isolate mx-3 overflow-hidden rounded-[2rem] bg-ink text-white sm:mx-5 lg:mx-8">
-        <div className="pointer-events-none absolute -right-20 -top-28 h-[30rem] w-[30rem] rounded-full bg-[#7658DF]/35 blur-3xl" />
-        <div className="pointer-events-none absolute bottom-[-14rem] left-[32%] h-[30rem] w-[30rem] rounded-full bg-[#B79BFF]/20 blur-3xl" />
-        <div className="relative mx-auto grid w-full min-w-0 max-w-7xl grid-cols-1 items-center gap-10 px-5 py-12 sm:gap-12 sm:px-8 sm:py-16 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-8 lg:px-10 lg:py-20 xl:gap-12 xl:px-12 xl:py-24">
-          <div>
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[.07] px-3 py-1.5 text-xs font-semibold tracking-wide text-[#D7CBFF]">
-              <Sparkles className="h-3.5 w-3.5" /> AI PRODUCT & GROWTH ADVISOR
-            </span>
-            <h1 className="mt-6 max-w-2xl text-4xl font-extrabold leading-[1.1] sm:text-5xl lg:text-6xl">
-              Məhsulunu tanı.<br />Müştərini anla.<br />
-              <span className="text-[#BFAEFF]">Daha ağıllı böyü.</span>
-            </h1>
-            <p className="mt-6 max-w-xl text-base leading-7 text-white/70 sm:text-lg">
-              Prodvisor biznesinizi öyrənir, müştəri yazışmalarında real problemləri sübutlarla aşkarlayır və onları konkret növbəti addımlara çevirir.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/onboarding" className="inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-bold text-white shadow-lg shadow-black/20 transition hover:bg-[#866BE7]">
-                Pulsuz başla <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link href="/onboarding" className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/[.06] px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
-                Demo biznesə bax
-              </Link>
-            </div>
-            <div className="mt-8 flex flex-wrap gap-x-5 gap-y-2 text-xs text-white/60">
-              <span className="inline-flex items-center gap-1.5">
-                <Check className="h-3.5 w-3.5 text-[#BFAEFF]" /> Sübutla əsaslandırılan nəticələr
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <Check className="h-3.5 w-3.5 text-[#BFAEFF]" /> Biznesinizə uyğun tövsiyələr
-              </span>
-            </div>
-          </div>
-
-          <div className="relative mx-auto w-full min-w-0 max-w-xl lg:max-w-none">
-            <div className="absolute -inset-5 rounded-[2rem] bg-[#7658DF]/20 blur-2xl" />
-            <div className="relative rounded-[1.6rem] border border-white/15 bg-white p-4 text-ink shadow-2xl sm:p-5">
-              <div className="flex items-center justify-between border-b border-line pb-4">
-                <div>
-                  <p className="text-xs font-bold text-accent">PRODVISOR / İCMAL</p>
-                  <h2 className="mt-1 text-lg font-extrabold">Naxış Atelyesi</h2>
-                </div>
-                <span className="rounded-full bg-sage px-3 py-1 text-xs font-semibold text-good">Biznes profili</span>
-              </div>
-              <div className="mt-4 rounded-2xl border border-[#E5DDF8] bg-[#FBF9FF] p-4">
-                <div className="flex items-center gap-2 text-xs font-bold text-accent">
-                  <Sparkles className="h-4 w-4" /> BU GÜN ÜÇÜN ƏSAS TÖVSİYƏ
-                </div>
-                <h3 className="mt-3 text-base font-extrabold">Çatdırılma sualını cavabsız qoymayın</h3>
-                <p className="mt-2 text-sm leading-6 text-muted">
-                  Müştəri qiymətlə yanaşı çatdırılma müddətini də soruşur. Bu məlumat cavabda yoxdur — dəqiq şərtləri əlavə edin.
-                </p>
-                <div className="mt-4 flex items-center gap-2 rounded-xl bg-white p-3 text-xs text-muted">
-                  <ShieldCheck className="h-4 w-4 shrink-0 text-accent" /> Mənbə: müştəri yazışmasından aşkarlanıb
-                </div>
-              </div>
-              <div className="mt-3 grid grid-cols-2 gap-3">
-                <div className="rounded-xl border border-line p-3">
-                  <MessageSquareText className="h-4 w-4 text-accent" />
-                  <p className="mt-2 text-xs text-muted">Analiz edilmiş söhbət</p>
-                  <p className="mt-1 text-2xl font-extrabold">04</p>
-                </div>
-                <div className="rounded-xl border border-line p-3">
-                  <Target className="h-4 w-4 text-accent" />
-                  <p className="mt-2 text-xs text-muted">Növbəti addım</p>
-                  <p className="mt-1 text-sm font-bold">Cavabı təkmilləşdir</p>
-                </div>
-              </div>
-              <div className="mt-3 flex items-center justify-between rounded-xl bg-ink px-4 py-3 text-white">
-                <span className="text-sm font-semibold">Fəaliyyət planı</span>
-                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/10">
-                  <ArrowRight className="h-4 w-4" />
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="why-prodvisor" className="mx-auto grid max-w-7xl gap-5 px-6 py-16 sm:grid-cols-3 lg:px-10 lg:py-20">
-        <div>
-          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-lilac text-accent">
-            <FingerprintIcon />
-          </span>
-          <h2 className="mt-4 text-lg font-extrabold">Biznesinizi tanıyır</h2>
-          <p className="mt-2 text-sm leading-6 text-muted">Məhsulunuz, auditoriyanız və məqsədləriniz tövsiyələr üçün kontekst yaradır.</p>
-        </div>
-        <div>
-          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-lilac text-accent">
-            <MessageSquareText className="h-5 w-5" />
-          </span>
-          <h2 className="mt-4 text-lg font-extrabold">Söhbətlərdən siqnal tapır</h2>
-          <p className="mt-2 text-sm leading-6 text-muted">Etirazları, cavabsız sualları və müştərinin niyyətini yazışmanın özünə əsasən göstərir.</p>
-        </div>
-        <div>
-          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-lilac text-accent">
-            <Target className="h-5 w-5" />
-          </span>
-          <h2 className="mt-4 text-lg font-extrabold">Analizi addıma çevirir</h2>
-          <p className="mt-2 text-sm leading-6 text-muted">Tövsiyəni fəaliyyət planına əlavə edin və icrasını izləyin.</p>
-        </div>
-      </section>
-
-      <section id="how-it-works" className="border-t border-line bg-[#F1EDF9]/60">
-        <div className="mx-auto flex max-w-7xl flex-col gap-5 px-6 py-12 sm:flex-row sm:items-center sm:justify-between lg:px-10">
-          <div>
-            <h2 className="text-2xl font-extrabold">Daha aydın qərarlarla başlayın.</h2>
-            <p className="mt-2 text-sm text-muted">Biznes profilinizi qurun, bir söhbət analiz edin və ilk addımı seçin.</p>
-          </div>
-          <Link href="/onboarding" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-bold text-white hover:bg-accent-dark">
-            Prodvisor-u sınayın <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
-      </section>
-
-      <footer className="px-6 py-6 text-center text-xs text-muted">
-        prodvisor. · Kiçik bizneslər üçün AI məhsul və inkişaf məsləhətçisi
-      </footer>
-    </div>
-  );
+const scenes=[
+ {num:"01",tag:"KONTEKST",title:"Əvvəlcə biznesini tanıyır.",desc:"Nə satırsan, kimə satırsan və hansı problemi həll edirsən? Cavabını bilmədiyin yerdə Prodvisor sənə düşünməyə kömək edir.",label:"Business DNA",detail:"Məhsulundan strategiyaya qədər vahid profil"},
+ {num:"02",tag:"ANLAYIŞ",title:"Sonra müştərinin nə dediyini anlayır.",desc:"Yazışmada gizlənən sualları, etirazları və qərarsızlıq səbəblərini sübutu ilə göstərir. Təxmin deyil, kontekstdən çıxan müşahidə.",label:"Customer Intelligence",detail:"Söhbətdən real müşahidəyə"},
+ {num:"03",tag:"HƏRƏKƏT",title:"İnsight-ları real addımlara çevirir.",desc:"İlk növbədə nəyi dəyişmək lazımdır? Daha yaxşı cavab, daha aydın məhsul və ya yeni kampaniya — hər tövsiyənin arxasında səbəb var.",label:"Action Intelligence",detail:"Problemdən növbəti addıma"},
+];
+function Mark({inverse=false}:{inverse?:boolean}){return <Image src={inverse?"/brand/prodvisor-dark-bg.svg":"/brand/prodvisor-primary.svg"} alt="prodvisor." width={784} height={177} className="h-auto w-[136px] sm:w-[153px]" priority/>;}
+function FloatingPreview({active}:{active:number}){
+ return <div className="scene-window" aria-label="Prodvisor funksiyalarının interaktiv nümayişi">
+  <div className="scene-window-head"><div className="scene-dots"><i/><i/><i/></div><div className="text-[10px] font-semibold tracking-wide text-[#6B6081]">prodvisor. / intelligence</div><span className="h-2 w-2 rounded-full bg-[#40B88F] shadow-[0_0_0_4px_#40B88F24]"/></div>
+  <div className="scene-window-body" key={active}>
+   {active===0?<><div className="scene-kicker"><Fingerprint size={14}/> BUSINESS DNA / 01</div><div className="mt-5 text-[20px] font-extrabold leading-snug sm:text-[26px]">Sizin məhsulunuzu fərqli edən nədir?</div><div className="mt-2 text-sm text-[#817A92]">Fikrim yoxdur? Birlikdə tapaq.</div><div className="mt-6 flex items-start gap-3 rounded-[16px] border border-[#E7DFFC] bg-[#F9F6FF] p-4"><div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#EAE1FF] text-accent"><Sparkles size={18}/></div><div><div className="font-bold">AI-dən təklif</div><p className="mt-1 text-xs leading-6 text-[#746E83]">Daha rahat istifadə, fərdi yanaşma və ya daha aydın məhsul dəyəri — hansını həqiqətən təmin edirsiniz?</p></div></div><div className="mt-5 flex gap-2"><span className="scene-chip scene-chip-active">Fərdi yanaşma</span><span className="scene-chip">Rahat istifadə</span></div></>:
+   active===1?<><div className="scene-kicker"><ScanSearch size={14}/> CUSTOMER INTELLIGENCE / 02</div><div className="mt-5 space-y-3"><div className="scene-bubble">Salam, qiyməti nə qədərdir?</div><div className="scene-bubble scene-bubble-reply">Salam! 45 AZN-dir.</div><div className="scene-bubble">Çatdırılma neçəyədir? Neçə günə çatır?</div></div><div className="mt-5 rounded-2xl border border-[#F3DCDF] bg-[#FFF7F7] p-4"><div className="flex items-center gap-2 text-[12px] font-extrabold text-[#A74759]"><Radar size={15}/> Cavabsız sual aşkarlanıb</div><p className="mt-2 text-xs leading-6 text-[#746D80]">Çatdırılma vaxtı və qiyməti qeyd edilməyib. Söhbəti davam etdirmək üçün bu məlumatları dəqiqləşdirin.</p></div></>:
+   <><div className="scene-kicker"><Target size={14}/> NEXT BEST ACTION / 03</div><div className="mt-5 text-[21px] font-extrabold sm:text-[25px]">Kiçik addım. Daha aydın təcrübə.</div><div className="mt-5 space-y-3">{["Çatdırılma məlumatını FAQ-a əlavə et","Qiymət etirazları üçün cavab şablonu hazırla","Yeni məhsul mesajını 2 variantda test et"].map((x,i)=><div key={x} className="flex items-center gap-3 rounded-xl border border-[#E8E4EE] bg-white px-3 py-3.5"><span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg ${i===0?'bg-[#E7F6EA] text-[#248C62]':'bg-[#F0ECFC] text-accent'}`}>{i===0?<Check size={14}/>:<span className="text-[11px] font-extrabold">{i+1}</span>}</span><span className="text-[12px] font-semibold">{x}</span></div>)}</div></>}
+  </div>
+  <div className="scene-window-foot"><span className="text-[11px] font-semibold text-[#8C8499]">{scenes[active].detail}</span><span className="text-[11px] font-bold text-accent">0{active+1} / 03</span></div>
+ </div>;
 }
-
-function FingerprintIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M12 11a2 2 0 0 0-2 2c0 2.5-.4 4.5-1.5 6.5M14 13c0 3.2-.6 5.6-1.8 8M8.5 16.5c-.3 1.3-.7 2.4-1.4 3.5M6 13a6 6 0 0 1 12 0c0 2.1-.2 4.1-.7 6M4 13a8 8 0 0 1 16 0M9 8.5a4 4 0 0 1 7 2.5" />
-    </svg>
-  );
+export default function Home(){
+ const [scene,setScene]=useState(0),[menu,setMenu]=useState(false),[pointer,setPointer]=useState({x:50,y:50}),[showDemo,setShowDemo]=useState(false);
+ const stepsRef=useRef<(HTMLElement|null)[]>([]);const heroRef=useRef<HTMLElement|null>(null);
+ useEffect(()=>{const obs=new IntersectionObserver(entries=>{const current=entries.filter(e=>e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];if(current){const idx=Number((current.target as HTMLElement).dataset.step||0);setScene(idx);}}, {rootMargin:"-30% 0px -30% 0px",threshold:[0,.2,.4,.7]});stepsRef.current.forEach(x=>x&&obs.observe(x));return()=>obs.disconnect();},[]);
+ function move(e:React.MouseEvent<HTMLElement>){const r=e.currentTarget.getBoundingClientRect();setPointer({x:(e.clientX-r.left)/r.width*100,y:(e.clientY-r.top)/r.height*100});}
+ return <div className="marketing-site min-h-screen bg-[#F8F6F2] text-ink">
+  <div className="marketing-navigation"><div className="mx-auto flex max-w-[1330px] items-center justify-between gap-4 px-5 py-4 sm:px-8"><Link href="/" aria-label="Prodvisor ana səhifə"><Mark/></Link><nav className="hidden items-center gap-8 text-[13px] font-semibold text-[#655E72] md:flex"><a href="#approach">Necə işləyir</a><a href="#features">İmkanlar</a><Link href="/for-business">Bizneslər üçün</Link><Link href="/pricing">Qiymətlər</Link></nav><div className="flex items-center gap-2"><Link href="/dashboard" className="hidden rounded-xl px-4 py-2.5 text-xs font-bold hover:bg-[#EEE9F5] sm:inline-flex">İş sahəsi</Link><Link href="/onboarding" className="marketing-primary !min-h-[41px] !px-4 !text-xs">Pulsuz başla <ArrowUpRight size={15}/></Link><button onClick={()=>setMenu(!menu)} className="rounded-xl p-2 md:hidden" aria-label="Menyunu aç">{menu?<X size={22}/>:<Menu size={22}/>}</button></div></div>{menu&&<nav className="flex flex-col gap-1 border-t border-[#E9E4ED] bg-[#F8F6F2] px-5 py-3 text-sm font-semibold md:hidden"><a onClick={()=>setMenu(false)} href="#approach" className="p-3">Necə işləyir</a><a onClick={()=>setMenu(false)} href="#features" className="p-3">İmkanlar</a><Link href="/for-business" className="p-3">Bizneslər üçün</Link><Link href="/pricing" className="p-3">Qiymətlər</Link></nav>}</div>
+  <main>
+   <section ref={heroRef} onMouseMove={move} className="hero-stage relative mx-3 isolate overflow-hidden rounded-[26px] text-white sm:mx-5 sm:rounded-[36px]">
+    <div className="hero-spotlight" style={{"--cursor-x":`${pointer.x}%`,"--cursor-y":`${pointer.y}%`} as React.CSSProperties}/><div className="hero-orbit hero-orbit-one"/><div className="hero-orbit hero-orbit-two"/><div className="hero-sphere"/><div className="hero-grain"/>
+    <div className="relative z-10 mx-auto grid min-h-[670px] max-w-[1330px] items-center gap-12 px-6 py-20 sm:px-10 lg:grid-cols-[1fr_.92fr] lg:gap-10 lg:px-12 lg:py-24">
+     <div className="relative z-10 max-w-[610px]"><div className="hero-pill"><span className="h-1.5 w-1.5 rounded-full bg-[#BAA3FF] shadow-[0_0_14px_#B29AFF]"/> PRODUCT INTELLIGENCE FOR EVERY BUSINESS</div><h1 className="mt-8 font-display text-[clamp(45px,5.9vw,82px)] font-extrabold leading-[1.075] tracking-[-.072em]">Müştərini <span className="hero-shimmer">anla.</span><br/>Daha yaxşı<br/><span className="text-[#BAA8FF]">böyü.</span></h1><p className="mt-7 max-w-[470px] text-[15px] leading-[1.9] text-[#C9C4D8] sm:text-[17px]">Biznesini tanıyan, söhbətlərindən öyrənən və nəyi dəyişəcəyini göstərən fərdi AI məhsul və inkişaf məsləhətçin.</p><div className="mt-9 flex flex-wrap items-center gap-3"><Link href="/onboarding" className="marketing-primary">Biznesini tanıt <ArrowUpRight size={18}/></Link><button onClick={()=>setShowDemo(!showDemo)} className="marketing-outline"><Play size={15} fill="currentColor"/> {showDemo?"Demonu gizlət":"60 saniyəyə tanış ol"}</button></div>{showDemo&&<div className="hero-demo-reveal mt-6 max-w-[480px] rounded-2xl border border-white/15 bg-white/10 p-4 text-sm leading-7 text-[#E8E2F5] backdrop-blur-md">1. Biznesini tanıt → 2. Müştəri söhbətini analiz et → 3. Sübutlu tövsiyə al. <Link className="ml-2 font-bold text-white underline" href="/onboarding">İndi sına</Link></div>}<div className="mt-10 flex items-center gap-2 text-xs font-medium text-[#BDB5CE]"><CheckCircle2 size={17} className="text-[#A6E6CC]"/> Əvvəlcədən marketinq biliyi tələb olunmur</div></div>
+     <div className="hero-product relative mx-auto w-full max-w-[540px]"><div className="hero-app-window"><div className="flex items-center justify-between border-b border-[#ECE8F3] px-5 py-4"><div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-[#7556D8]"/><span className="text-[12px] font-bold text-ink">Prodvisor / Business Pulse</span></div><span className="rounded-full bg-[#EEF8F1] px-3 py-1 text-[10px] font-extrabold text-[#22825B]">● AI active</span></div><div className="p-5 sm:p-7"><div className="text-[11px] font-semibold text-[#988FA5]">BU GÜN ÜÇÜN GÖRÜNƏN SİQNAL</div><h3 className="mt-3 font-display text-[22px] font-extrabold leading-snug text-ink sm:text-[28px]">Niyə bəzi müştərilər cavab vermir?</h3><div className="mt-5 flex items-start gap-3 rounded-2xl bg-[#F5F0FF] p-4"><div className="mt-0.5 rounded-xl bg-[#E8DFFE] p-2 text-accent"><MessageCircle size={18}/></div><p className="text-[12px] leading-6 text-[#6D6480]">“Bəs çatdırılma necə olacaq?” — söhbətdə bu suala cavab yoxdur.</p></div><div className="mt-4 flex items-start gap-3 rounded-2xl border border-[#E7E0F0] p-4"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#E6F5ED] text-[#29966E]"><Sparkles size={17}/></span><div><p className="text-[12px] font-extrabold text-ink">Tövsiyə edilən addım</p><p className="mt-1 text-[11px] leading-5 text-[#797083]">Çatdırılmanın qiymətini və müddətini dəqiqləşdirən qısa cavab hazırlayın.</p></div></div><div className="mt-5 flex items-center justify-between rounded-xl bg-ink px-4 py-3.5 text-[11px] font-bold text-white"><span>Insight → Action</span><ArrowRight size={16}/></div></div></div><div className="hero-floating-card hero-float-left"><Sparkles size={16}/> Insight found</div><div className="hero-floating-card hero-float-right"><span className="text-[18px]">↗</span> Next move</div></div>
+    </div><a href="#approach" className="absolute bottom-7 left-1/2 z-20 -translate-x-1/2 text-[11px] font-bold uppercase tracking-[.2em] text-white/55"><span className="flex items-center gap-2">Scroll to explore <ArrowDown size={14} className="animate-bounce"/></span></a>
+   </section>
+   <section className="mx-auto max-w-[1260px] px-6 py-24 text-center sm:px-8 sm:py-32"><span className="marketing-eyebrow">MƏHSULUNDAN BAŞLAYIR</span><h2 className="mx-auto mt-5 max-w-4xl font-display text-[clamp(32px,4vw,54px)] font-extrabold leading-[1.17] tracking-[-.06em]">Bir çox alət sənə cavab verir.<br/><span className="text-[#8F7AC4]">Prodvisor əvvəlcə səni anlayır.</span></h2><p className="mx-auto mt-6 max-w-2xl text-[15px] leading-8 text-muted">Məhsulun, məqsədin və müştərilərin bir kontekstdə birləşir. Ona görə də hər tövsiyə hamı üçün deyil — sənin biznesin üçündür.</p></section>
+   <section id="approach" className="scroll-story relative bg-[#EEE9F6]"><div className="mx-auto max-w-[1330px] px-5 py-24 sm:px-8 lg:py-36"><div className="mb-16"><span className="marketing-eyebrow">THE PRODUCT STORY</span><h2 className="mt-5 max-w-xl font-display text-[clamp(32px,4vw,52px)] font-extrabold leading-[1.15] tracking-[-.055em]">Sən böyüdükcə, <span className="text-accent">o da öyrənir.</span></h2></div><div className="grid gap-14 lg:grid-cols-[.9fr_1.1fr] lg:gap-20"><div className="space-y-16 lg:space-y-32">{scenes.map((s,i)=><article key={s.num} data-step={i} ref={el=>{stepsRef.current[i]=el}} className={`story-step min-h-[45vh] scroll-mt-[20vh] py-8 transition-opacity duration-500 lg:min-h-[66vh] lg:py-16 ${scene===i?'opacity-100':'opacity-60'}`}><div className="flex items-center gap-3"><span className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#D1C3EB] bg-white font-bold text-accent">{s.num}</span><span className="text-[11px] font-extrabold tracking-[.18em] text-accent">{s.tag}</span></div><h3 className="mt-7 max-w-[460px] font-display text-[clamp(27px,3.3vw,44px)] font-extrabold leading-[1.2] tracking-[-.045em]">{s.title}</h3><p className="mt-5 max-w-[430px] text-[15px] leading-[1.9] text-[#756E82]">{s.desc}</p><span className="mt-6 inline-flex items-center gap-2 text-xs font-bold text-accent"><span className="h-px w-7 bg-accent"/>{s.label}</span></article>)}</div><div className="story-sticky-col"><div className="sticky top-[13vh] rounded-[30px] border border-white/50 bg-[#DCD1EF] p-5 shadow-[0_30px_90px_#39255417] sm:p-8"><div className="absolute -right-7 -top-7 h-36 w-36 rounded-full bg-[#9879F0]/25 blur-3xl"/><FloatingPreview active={scene}/><div className="mt-6 flex items-center justify-between gap-4 px-2"><div className="flex gap-2">{scenes.map((s,i)=><span key={s.num} className={`h-[5px] rounded-full transition-all duration-500 ${scene===i?'w-10 bg-accent':'w-4 bg-[#B9A8D1]'}`}/>)}</div><span className="text-[11px] font-extrabold text-[#685E7A]">Aydınlıq → Qərar → Böyümə</span></div></div></div></div></div></section>
+   <section id="features" className="mx-auto max-w-[1300px] px-6 py-24 sm:px-8 sm:py-36"><div className="mb-12 flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><span className="marketing-eyebrow">ONE PRODUCT. CONNECTED THINKING.</span><h2 className="mt-5 font-display text-[clamp(32px,4vw,54px)] font-extrabold tracking-[-.06em]">İşini bir yerdən anla.</h2></div><p className="max-w-[360px] text-sm leading-7 text-muted">Konkret işlər üçün yaradılmış, bir-biri ilə əlaqəli alətlər.</p></div><div className="grid gap-4 md:grid-cols-3"><Link href="/business" className="feature-tile feature-tile-ink"><Fingerprint size={25}/><div className="mt-auto"><p className="text-xs font-bold tracking-widest text-white/55">01 / KNOW</p><h3 className="mt-3 font-display text-[26px] font-extrabold">Business DNA</h3><p className="mt-3 max-w-xs text-sm leading-7 text-[#D0C9DD]">Məhsulun, müştərin və fərqin hər tövsiyənin başlanğıcıdır.</p><ArrowUpRight className="mt-7" size={20}/></div></Link><Link href="/inbox" className="feature-tile feature-tile-lilac"><MessageCircle size={25}/><div className="mt-auto"><p className="text-xs font-bold tracking-widest text-accent/70">02 / UNDERSTAND</p><h3 className="mt-3 font-display text-[26px] font-extrabold">Customer Inbox</h3><p className="mt-3 max-w-xs text-sm leading-7 text-[#6D617D]">Mesajları bir yerdə gör. Etirazları və qaçan sualları aşkar et.</p><ArrowUpRight className="mt-7" size={20}/></div></Link><Link href="/actions" className="feature-tile feature-tile-white"><Target size={25}/><div className="mt-auto"><p className="text-xs font-bold tracking-widest text-muted">03 / GROW</p><h3 className="mt-3 font-display text-[26px] font-extrabold">Growth Actions</h3><p className="mt-3 max-w-xs text-sm leading-7 text-muted">Nəyi, niyə və hansı ardıcıllıqla dəyişəcəyini bil.</p><ArrowUpRight className="mt-7" size={20}/></div></Link></div></section>
+   <section className="mx-3 overflow-hidden rounded-[28px] bg-[#241D35] px-6 py-20 text-center text-white sm:mx-5 sm:rounded-[36px] sm:px-10 sm:py-28"><div className="cta-aura"><span className="marketing-eyebrow !text-[#C7B5FE]">SƏNİN BİZNESİN, SƏNİN YOLUN</span><h2 className="mx-auto mt-6 max-w-[840px] font-display text-[clamp(36px,5vw,68px)] font-extrabold leading-[1.12] tracking-[-.065em]">Daha yaxşı qərarlar <span className="text-[#B8A1FF]">bir sualdan başlayır.</span></h2><p className="mx-auto mt-6 max-w-[520px] text-[15px] leading-8 text-white/65">İlk addımı at. Biznesini tanıt, müştərini başa düş və böyümək üçün nə etməli olduğunu gör.</p><div className="mt-8 flex flex-wrap items-center justify-center gap-3"><Link className="marketing-primary" href="/onboarding">Pulsuz başla <ArrowUpRight size={18}/></Link><Link className="marketing-outline" href="/pricing">Planları müqayisə et <ChevronRight size={17}/></Link></div></div></section>
+  </main><footer className="mx-auto flex max-w-[1280px] flex-col justify-between gap-6 px-6 py-10 text-xs text-muted sm:flex-row sm:items-center sm:px-8"><Link href="/"><Mark/></Link><p>© {new Date().getFullYear()} prodvisor. Düşün. Anla. Böyü.</p><div className="flex flex-wrap gap-5"><Link href="/for-business">Bizneslər üçün</Link><Link href="/pricing">Qiymətlər</Link><Link href="/dashboard">İş sahəsi</Link></div></footer>
+ </div>;
 }
