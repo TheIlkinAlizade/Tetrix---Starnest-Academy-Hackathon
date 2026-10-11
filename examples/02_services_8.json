@@ -1,0 +1,255 @@
+[
+  {
+    "customer": "Sevinc R. · S01",
+    "channel": "instagram",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Salam, dırnaq ustasına şənbə günü saat 15:00-a yer var?",
+        "at": "10:56"
+      },
+      {
+        "from": "business",
+        "text": "Salam, şənbə 16:00 boşdur.",
+        "at": "10:58"
+      },
+      {
+        "from": "customer",
+        "text": "15:00 mümkün deyil? Mən yalnız o vaxt boşam.",
+        "at": "11:00"
+      },
+      {
+        "from": "business",
+        "text": "Təəssüf, həmin saat doludur.",
+        "at": "11:02"
+      },
+      {
+        "from": "customer",
+        "text": "Onda gələn həftəyə baxaram.",
+        "at": "11:04"
+      }
+    ]
+  },
+  {
+    "customer": "Ramin F. · S02",
+    "channel": "messenger",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Sayt hazırlanması üçün qiymət neçədir?",
+        "at": "11:03"
+      },
+      {
+        "from": "business",
+        "text": "500 AZN-dən başlayır.",
+        "at": "11:05"
+      },
+      {
+        "from": "customer",
+        "text": "Bu qiymətə domen, hosting və mobil uyğunluq daxildir?",
+        "at": "11:07"
+      },
+      {
+        "from": "business",
+        "text": "Standart sayt paketidir.",
+        "at": "11:09"
+      },
+      {
+        "from": "customer",
+        "text": "Hansı işlərin daxil olduğunu yazılı göndərə bilərsiniz?",
+        "at": "11:11"
+      }
+    ]
+  },
+  {
+    "customer": "Günel A. · S03",
+    "channel": "web",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "İngilis dili kursunuza yazılmaq istəyirəm. Səviyyəmi əvvəl yoxlayırsınız?",
+        "at": "11:10"
+      },
+      {
+        "from": "business",
+        "text": "Bəli, qısa səviyyə yoxlaması edirik.",
+        "at": "11:12"
+      },
+      {
+        "from": "customer",
+        "text": "Ödəniş aylıqdır?",
+        "at": "11:14"
+      },
+      {
+        "from": "business",
+        "text": "Aylıq 120 AZN-dir.",
+        "at": "11:16"
+      },
+      {
+        "from": "customer",
+        "text": "Yaxşı, bu həftə səviyyə testinə qeydiyyat etmək istəyirəm.",
+        "at": "11:18"
+      }
+    ]
+  },
+  {
+    "customer": "Tural İ. · S04",
+    "channel": "whatsapp",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Avtomobil salon təmizliyi neçə saata bitir?",
+        "at": "11:17"
+      },
+      {
+        "from": "business",
+        "text": "Təxminən 3 saat.",
+        "at": "11:19"
+      },
+      {
+        "from": "customer",
+        "text": "Sizdə əvvəl-sonra şəkilləri var? Daha əvvəl başqa yerdə nəticə pis olmuşdu.",
+        "at": "11:21"
+      },
+      {
+        "from": "business",
+        "text": "Bizim ustalar təcrübəlidir.",
+        "at": "11:23"
+      },
+      {
+        "from": "customer",
+        "text": "Əvvəlki işlərin fotolarını görəndən sonra qərar verərəm.",
+        "at": "11:25"
+      }
+    ]
+  },
+  {
+    "customer": "Fidan M. · S05",
+    "channel": "instagram",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Psixologiya seminarına onlayn qoşulmaq mümkündür?",
+        "at": "11:24"
+      },
+      {
+        "from": "business",
+        "text": "Salam, seminar şənbə günü mərkəzimizdə olacaq.",
+        "at": "11:26"
+      },
+      {
+        "from": "customer",
+        "text": "Mən başqa şəhərdəyəm. Onlayn versiyası olacaq?",
+        "at": "11:28"
+      },
+      {
+        "from": "business",
+        "text": "İştirak haqqı 25 AZN-dir.",
+        "at": "11:30"
+      },
+      {
+        "from": "customer",
+        "text": "Onlayn qoşulma sualım cavabsız qaldı.",
+        "at": "11:32"
+      }
+    ]
+  },
+  {
+    "customer": "Əli M. · S06",
+    "channel": "messenger",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Kondisioner ustası bazar ertəsi gələ bilər?",
+        "at": "11:31"
+      },
+      {
+        "from": "business",
+        "text": "Bazar ertəsi 11:00 boş vaxtımız var.",
+        "at": "11:33"
+      },
+      {
+        "from": "customer",
+        "text": "Diaqnostika qiyməti neçədir?",
+        "at": "11:35"
+      },
+      {
+        "from": "business",
+        "text": "Diaqnostika 15 AZN-dir, təmir qiyməti nasazlıqdan asılı olacaq.",
+        "at": "11:37"
+      },
+      {
+        "from": "customer",
+        "text": "Oldu, 11:00 üçün sifariş edək.",
+        "at": "11:39"
+      },
+      {
+        "from": "business",
+        "text": "Vaxtı saxladıq, təsdiq mesajı göndəriləcək.",
+        "at": "11:41"
+      }
+    ]
+  },
+  {
+    "customer": "Esmira V. · S07",
+    "channel": "web",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Dizayn xidməti üçün müqavilə bağlayırsınız?",
+        "at": "11:38"
+      },
+      {
+        "from": "business",
+        "text": "Bəli, müqavilə ilə işləyirik.",
+        "at": "11:40"
+      },
+      {
+        "from": "customer",
+        "text": "İşin neçə dəfə düzəliş olunması daxildir?",
+        "at": "11:42"
+      },
+      {
+        "from": "business",
+        "text": "Layihənin gedişində danışarıq.",
+        "at": "11:44"
+      },
+      {
+        "from": "customer",
+        "text": "Şərtlər dəqiq olmayanda başlamağa çəkinirəm.",
+        "at": "11:46"
+      }
+    ]
+  },
+  {
+    "customer": "Mətanət D. · S08",
+    "channel": "whatsapp",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Keçən həftə sifariş verdiyim təmizləmə xidmətindən sonra ləkə qalıb.",
+        "at": "11:45"
+      },
+      {
+        "from": "business",
+        "text": "Təəssüf edirik. Xidmətin tarixini yazın zəhmət olmasa.",
+        "at": "11:47"
+      },
+      {
+        "from": "customer",
+        "text": "5 oktyabr idi. Təkrar baxış mümkündür?",
+        "at": "11:49"
+      },
+      {
+        "from": "business",
+        "text": "Müraciəti ustaya ötürüb bu gün sizə vaxt təklif edəcəyik.",
+        "at": "11:51"
+      },
+      {
+        "from": "customer",
+        "text": "Təşəkkür edirəm, cavab gözləyirəm.",
+        "at": "11:53"
+      }
+    ]
+  }
+]

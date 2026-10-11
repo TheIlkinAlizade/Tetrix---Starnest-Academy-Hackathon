@@ -1,0 +1,33 @@
+[
+  {
+    "customer": "Aysel M. · P01",
+    "channel": "instagram",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Salam, bu keramika fincanın qiyməti nə qədərdir?",
+        "at": "10:00"
+      },
+      {
+        "from": "business",
+        "text": "Salam! 42 AZN-dir, əl işidir.",
+        "at": "10:02"
+      },
+      {
+        "from": "customer",
+        "text": "Başqa səhifədə oxşarını 28 manata gördüm. Sizinki niyə bahadır?",
+        "at": "10:04"
+      },
+      {
+        "from": "business",
+        "text": "Bizim məhsullarımız keyfiyyətlidir.",
+        "at": "10:06"
+      },
+      {
+        "from": "customer",
+        "text": "Hansı fərqi var, konkret deyə bilərsiniz?",
+        "at": "10:08"
+      }
+    ]
+  }
+]

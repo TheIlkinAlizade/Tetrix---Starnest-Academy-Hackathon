@@ -1,0 +1,741 @@
+[
+  {
+    "customer": "Aysel M. · P01",
+    "channel": "instagram",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Salam, bu keramika fincanın qiyməti nə qədərdir?",
+        "at": "10:00"
+      },
+      {
+        "from": "business",
+        "text": "Salam! 42 AZN-dir, əl işidir.",
+        "at": "10:02"
+      },
+      {
+        "from": "customer",
+        "text": "Başqa səhifədə oxşarını 28 manata gördüm. Sizinki niyə bahadır?",
+        "at": "10:04"
+      },
+      {
+        "from": "business",
+        "text": "Bizim məhsullarımız keyfiyyətlidir.",
+        "at": "10:06"
+      },
+      {
+        "from": "customer",
+        "text": "Hansı fərqi var, konkret deyə bilərsiniz?",
+        "at": "10:08"
+      }
+    ]
+  },
+  {
+    "customer": "Murad B. · P02",
+    "channel": "messenger",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Hədiyyə qutusu bu gün sifariş olunsa sabah saat 12-yə çatır?",
+        "at": "10:07"
+      },
+      {
+        "from": "business",
+        "text": "Bakı daxili çatdırılma 1-3 iş günüdür.",
+        "at": "10:09"
+      },
+      {
+        "from": "customer",
+        "text": "Mənə mütləq sabah 12-yə lazımdır. Ekspress çatdırılma var?",
+        "at": "10:11"
+      },
+      {
+        "from": "business",
+        "text": "Qiymət 59 AZN-dir.",
+        "at": "10:13"
+      },
+      {
+        "from": "customer",
+        "text": "Çatdırılma sualıma cavab vermədiniz.",
+        "at": "10:15"
+      }
+    ]
+  },
+  {
+    "customer": "Nərgiz Ə. · P03",
+    "channel": "instagram",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Salam, idman ayaqqabısının 38 ölçüsü var?",
+        "at": "10:14"
+      },
+      {
+        "from": "business",
+        "text": "Salam, hazırda 38 var.",
+        "at": "10:16"
+      },
+      {
+        "from": "customer",
+        "text": "Ölçü uyğun gəlməsə dəyişmək mümkündür?",
+        "at": "10:18"
+      },
+      {
+        "from": "business",
+        "text": "Bəli, istifadə edilməmiş məhsulu 7 gün ərzində dəyişirik.",
+        "at": "10:20"
+      },
+      {
+        "from": "customer",
+        "text": "Oldu, sifarişi necə rəsmiləşdirim?",
+        "at": "10:22"
+      }
+    ]
+  },
+  {
+    "customer": "Rövşən N. · P04",
+    "channel": "web",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Bu blenderin zəmanəti var?",
+        "at": "10:21"
+      },
+      {
+        "from": "business",
+        "text": "Bəli, zəmanətlidir.",
+        "at": "10:23"
+      },
+      {
+        "from": "customer",
+        "text": "Rəsmi zəmanətdir? Servis haradadır?",
+        "at": "10:25"
+      },
+      {
+        "from": "business",
+        "text": "Narahat olmayın, problemsizdir.",
+        "at": "10:27"
+      },
+      {
+        "from": "customer",
+        "text": "Başa düşdüm, hələlik qərar vermədim.",
+        "at": "10:29"
+      }
+    ]
+  },
+  {
+    "customer": "Leyla Q. · P05",
+    "channel": "instagram",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Salam, qiymət nə qədərdir?",
+        "at": "10:28"
+      },
+      {
+        "from": "business",
+        "text": "Salam! 35 AZN.",
+        "at": "10:30"
+      },
+      {
+        "from": "customer",
+        "text": "Təşəkkürlər.",
+        "at": "10:32"
+      }
+    ]
+  },
+  {
+    "customer": "Elvin H. · P06",
+    "channel": "messenger",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Bu portativ şarj cihazını almaq istəyirəm, 20 000 mAh model var?",
+        "at": "10:35"
+      },
+      {
+        "from": "business",
+        "text": "Bəli, 20 000 mAh model 49 AZN-dir.",
+        "at": "10:37"
+      },
+      {
+        "from": "customer",
+        "text": "Bakıya çatdırılma nə qədərdir?",
+        "at": "10:39"
+      },
+      {
+        "from": "business",
+        "text": "3 AZN. Çatdırılma sabah mümkündür.",
+        "at": "10:41"
+      },
+      {
+        "from": "customer",
+        "text": "Sifarişi təsdiqləyirəm, ünvanı ayrıca göndərəcəyəm.",
+        "at": "10:43"
+      },
+      {
+        "from": "business",
+        "text": "Təşəkkürlər, sifarişinizi qeydə aldıq.",
+        "at": "10:45"
+      }
+    ]
+  },
+  {
+    "customer": "Səbinə T. · P07",
+    "channel": "whatsapp",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Bu saç baxımı setində həssas dəri üçün uyğun olmayan maddə var?",
+        "at": "10:42"
+      },
+      {
+        "from": "business",
+        "text": "Bizdə çox satılan məhsuldur.",
+        "at": "10:44"
+      },
+      {
+        "from": "customer",
+        "text": "Tərkibini göndərə bilərsiniz? Ətirli məhsullara həssasam.",
+        "at": "10:46"
+      },
+      {
+        "from": "business",
+        "text": "Rəylərimiz yaxşıdır, rahat ala bilərsiniz.",
+        "at": "10:48"
+      },
+      {
+        "from": "customer",
+        "text": "Tərkibini bilmədən almıram.",
+        "at": "10:50"
+      }
+    ]
+  },
+  {
+    "customer": "Kənan E. · P08",
+    "channel": "instagram",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Salam, çantanın qara rəngi var?",
+        "at": "10:49"
+      },
+      {
+        "from": "business",
+        "text": "Bəli, qara və qəhvəyi rənglər var.",
+        "at": "10:51"
+      },
+      {
+        "from": "customer",
+        "text": "Qara rəngin şəklini atın zəhmət olmasa.",
+        "at": "10:53"
+      },
+      {
+        "from": "business",
+        "text": "Əlbəttə, kataloq linkini göndərəcəyəm.",
+        "at": "10:55"
+      },
+      {
+        "from": "customer",
+        "text": "Gözləyirəm, hələ link gəlməyib.",
+        "at": "10:57"
+      }
+    ]
+  },
+  {
+    "customer": "Sevinc R. · S01",
+    "channel": "instagram",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Salam, dırnaq ustasına şənbə günü saat 15:00-a yer var?",
+        "at": "10:56"
+      },
+      {
+        "from": "business",
+        "text": "Salam, şənbə 16:00 boşdur.",
+        "at": "10:58"
+      },
+      {
+        "from": "customer",
+        "text": "15:00 mümkün deyil? Mən yalnız o vaxt boşam.",
+        "at": "11:00"
+      },
+      {
+        "from": "business",
+        "text": "Təəssüf, həmin saat doludur.",
+        "at": "11:02"
+      },
+      {
+        "from": "customer",
+        "text": "Onda gələn həftəyə baxaram.",
+        "at": "11:04"
+      }
+    ]
+  },
+  {
+    "customer": "Ramin F. · S02",
+    "channel": "messenger",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Sayt hazırlanması üçün qiymət neçədir?",
+        "at": "11:03"
+      },
+      {
+        "from": "business",
+        "text": "500 AZN-dən başlayır.",
+        "at": "11:05"
+      },
+      {
+        "from": "customer",
+        "text": "Bu qiymətə domen, hosting və mobil uyğunluq daxildir?",
+        "at": "11:07"
+      },
+      {
+        "from": "business",
+        "text": "Standart sayt paketidir.",
+        "at": "11:09"
+      },
+      {
+        "from": "customer",
+        "text": "Hansı işlərin daxil olduğunu yazılı göndərə bilərsiniz?",
+        "at": "11:11"
+      }
+    ]
+  },
+  {
+    "customer": "Günel A. · S03",
+    "channel": "web",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "İngilis dili kursunuza yazılmaq istəyirəm. Səviyyəmi əvvəl yoxlayırsınız?",
+        "at": "11:10"
+      },
+      {
+        "from": "business",
+        "text": "Bəli, qısa səviyyə yoxlaması edirik.",
+        "at": "11:12"
+      },
+      {
+        "from": "customer",
+        "text": "Ödəniş aylıqdır?",
+        "at": "11:14"
+      },
+      {
+        "from": "business",
+        "text": "Aylıq 120 AZN-dir.",
+        "at": "11:16"
+      },
+      {
+        "from": "customer",
+        "text": "Yaxşı, bu həftə səviyyə testinə qeydiyyat etmək istəyirəm.",
+        "at": "11:18"
+      }
+    ]
+  },
+  {
+    "customer": "Tural İ. · S04",
+    "channel": "whatsapp",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Avtomobil salon təmizliyi neçə saata bitir?",
+        "at": "11:17"
+      },
+      {
+        "from": "business",
+        "text": "Təxminən 3 saat.",
+        "at": "11:19"
+      },
+      {
+        "from": "customer",
+        "text": "Sizdə əvvəl-sonra şəkilləri var? Daha əvvəl başqa yerdə nəticə pis olmuşdu.",
+        "at": "11:21"
+      },
+      {
+        "from": "business",
+        "text": "Bizim ustalar təcrübəlidir.",
+        "at": "11:23"
+      },
+      {
+        "from": "customer",
+        "text": "Əvvəlki işlərin fotolarını görəndən sonra qərar verərəm.",
+        "at": "11:25"
+      }
+    ]
+  },
+  {
+    "customer": "Fidan M. · S05",
+    "channel": "instagram",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Psixologiya seminarına onlayn qoşulmaq mümkündür?",
+        "at": "11:24"
+      },
+      {
+        "from": "business",
+        "text": "Salam, seminar şənbə günü mərkəzimizdə olacaq.",
+        "at": "11:26"
+      },
+      {
+        "from": "customer",
+        "text": "Mən başqa şəhərdəyəm. Onlayn versiyası olacaq?",
+        "at": "11:28"
+      },
+      {
+        "from": "business",
+        "text": "İştirak haqqı 25 AZN-dir.",
+        "at": "11:30"
+      },
+      {
+        "from": "customer",
+        "text": "Onlayn qoşulma sualım cavabsız qaldı.",
+        "at": "11:32"
+      }
+    ]
+  },
+  {
+    "customer": "Əli M. · S06",
+    "channel": "messenger",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Kondisioner ustası bazar ertəsi gələ bilər?",
+        "at": "11:31"
+      },
+      {
+        "from": "business",
+        "text": "Bazar ertəsi 11:00 boş vaxtımız var.",
+        "at": "11:33"
+      },
+      {
+        "from": "customer",
+        "text": "Diaqnostika qiyməti neçədir?",
+        "at": "11:35"
+      },
+      {
+        "from": "business",
+        "text": "Diaqnostika 15 AZN-dir, təmir qiyməti nasazlıqdan asılı olacaq.",
+        "at": "11:37"
+      },
+      {
+        "from": "customer",
+        "text": "Oldu, 11:00 üçün sifariş edək.",
+        "at": "11:39"
+      },
+      {
+        "from": "business",
+        "text": "Vaxtı saxladıq, təsdiq mesajı göndəriləcək.",
+        "at": "11:41"
+      }
+    ]
+  },
+  {
+    "customer": "Esmira V. · S07",
+    "channel": "web",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Dizayn xidməti üçün müqavilə bağlayırsınız?",
+        "at": "11:38"
+      },
+      {
+        "from": "business",
+        "text": "Bəli, müqavilə ilə işləyirik.",
+        "at": "11:40"
+      },
+      {
+        "from": "customer",
+        "text": "İşin neçə dəfə düzəliş olunması daxildir?",
+        "at": "11:42"
+      },
+      {
+        "from": "business",
+        "text": "Layihənin gedişində danışarıq.",
+        "at": "11:44"
+      },
+      {
+        "from": "customer",
+        "text": "Şərtlər dəqiq olmayanda başlamağa çəkinirəm.",
+        "at": "11:46"
+      }
+    ]
+  },
+  {
+    "customer": "Mətanət D. · S08",
+    "channel": "whatsapp",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Keçən həftə sifariş verdiyim təmizləmə xidmətindən sonra ləkə qalıb.",
+        "at": "11:45"
+      },
+      {
+        "from": "business",
+        "text": "Təəssüf edirik. Xidmətin tarixini yazın zəhmət olmasa.",
+        "at": "11:47"
+      },
+      {
+        "from": "customer",
+        "text": "5 oktyabr idi. Təkrar baxış mümkündür?",
+        "at": "11:49"
+      },
+      {
+        "from": "business",
+        "text": "Müraciəti ustaya ötürüb bu gün sizə vaxt təklif edəcəyik.",
+        "at": "11:51"
+      },
+      {
+        "from": "customer",
+        "text": "Təşəkkür edirəm, cavab gözləyirəm.",
+        "at": "11:53"
+      }
+    ]
+  },
+  {
+    "customer": "Elnur S. · A01",
+    "channel": "instagram",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Salam, bu online kursun videoları neçə ay açıq qalır?",
+        "at": "11:52"
+      },
+      {
+        "from": "business",
+        "text": "6 ay boyunca baxa bilərsiniz.",
+        "at": "11:54"
+      },
+      {
+        "from": "customer",
+        "text": "Qiyməti 150 AZN-dir? Bir də sertifikat verirsiniz?",
+        "at": "11:56"
+      },
+      {
+        "from": "business",
+        "text": "Bəli, qiymət 150 AZN-dir.",
+        "at": "11:58"
+      },
+      {
+        "from": "customer",
+        "text": "Sertifikat barədə hələ cavab almamışam.",
+        "at": "12:00"
+      }
+    ]
+  },
+  {
+    "customer": "Aynur C. · A02",
+    "channel": "whatsapp",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Hello! Does the package include international shipping?",
+        "at": "11:59"
+      },
+      {
+        "from": "business",
+        "text": "Salam, paket 70 AZN-dir.",
+        "at": "12:01"
+      },
+      {
+        "from": "customer",
+        "text": "I need shipping to Georgia, not the local price.",
+        "at": "12:03"
+      },
+      {
+        "from": "business",
+        "text": "Xarici çatdırılma ayrıca hesablanır, amma hazırda Gürcüstana çatdırılma etmirik.",
+        "at": "12:05"
+      },
+      {
+        "from": "customer",
+        "text": "Got it, thanks. I will look for another seller.",
+        "at": "12:07"
+      }
+    ]
+  },
+  {
+    "customer": "Cavid B. · A03",
+    "channel": "web",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Mənə hansı planınız uyğun olar?",
+        "at": "12:06"
+      },
+      {
+        "from": "business",
+        "text": "Ən populyar planımız Premiumdur.",
+        "at": "12:08"
+      },
+      {
+        "from": "customer",
+        "text": "Mən ayda cəmi iki dəfə istifadə edəcəyəm, Premium lazım deyil yəqin.",
+        "at": "12:10"
+      },
+      {
+        "from": "business",
+        "text": "Premium müştərilərimiz çox razıdır.",
+        "at": "12:12"
+      },
+      {
+        "from": "customer",
+        "text": "Mənə daha sərfəli plan tapmaqda kömək edə bilərsiniz?",
+        "at": "12:14"
+      }
+    ]
+  },
+  {
+    "customer": "Nigar P. · A04",
+    "channel": "messenger",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Başqa mağaza eyni məhsulu 39 AZN deyir, siz 49 AZN yazmısınız. Qiyməti endirə bilərsiniz?",
+        "at": "12:13"
+      },
+      {
+        "from": "business",
+        "text": "Qiymətimiz 49 AZN-dir.",
+        "at": "12:15"
+      },
+      {
+        "from": "customer",
+        "text": "Onda zəmanət və ya əlavə xidmət fərqi varmı?",
+        "at": "12:17"
+      },
+      {
+        "from": "business",
+        "text": "Endirim edə bilmirik.",
+        "at": "12:19"
+      },
+      {
+        "from": "customer",
+        "text": "Yaxşı, başqa mağazadan alacağam.",
+        "at": "12:21"
+      }
+    ]
+  },
+  {
+    "customer": "Samir K. · A05",
+    "channel": "instagram",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Ödənişi etdim, amma sifarişin təsdiq mesajı gəlməyib.",
+        "at": "12:20"
+      },
+      {
+        "from": "business",
+        "text": "Sifariş nömrənizi yazın zəhmət olmasa.",
+        "at": "12:22"
+      },
+      {
+        "from": "customer",
+        "text": "Numara 12345. Mənim kartımdan pul çıxılıb.",
+        "at": "12:24"
+      },
+      {
+        "from": "business",
+        "text": "Müraciəti yoxlama üçün yönləndiririk. Bank məlumatları və şifrə göndərməyin.",
+        "at": "12:26"
+      },
+      {
+        "from": "customer",
+        "text": "Oldu. Təxmini nə vaxt cavab verəcəksiniz?",
+        "at": "12:28"
+      }
+    ]
+  },
+  {
+    "customer": "Lalə Y. · A06",
+    "channel": "whatsapp",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Salam. İki variant arasında qalmışam.",
+        "at": "12:27"
+      },
+      {
+        "from": "business",
+        "text": "Hansılara baxırsınız?",
+        "at": "12:29"
+      },
+      {
+        "from": "customer",
+        "text": "Mavi və yaşıl. Hansı daha yaxşıdır?",
+        "at": "12:31"
+      },
+      {
+        "from": "business",
+        "text": "Hər ikisi yaxşıdır.",
+        "at": "12:33"
+      },
+      {
+        "from": "customer",
+        "text": "Mən gündəlik istifadə üçün istəyirəm, fərqləri nədir?",
+        "at": "12:35"
+      }
+    ]
+  },
+  {
+    "customer": "Elgün Q. · A07",
+    "channel": "messenger",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Sizə keçən ay yazmışdım. O vaxt 80 AZN idi, indi niyə 95 AZN olub?",
+        "at": "12:34"
+      },
+      {
+        "from": "business",
+        "text": "Qiymətlər dəyişib.",
+        "at": "12:36"
+      },
+      {
+        "from": "customer",
+        "text": "Nə dəyişib? Xidmətin tərkibi, yoxsa sadəcə qiymət?",
+        "at": "12:38"
+      },
+      {
+        "from": "business",
+        "text": "Təkliflərimiz yenilənib.",
+        "at": "12:40"
+      },
+      {
+        "from": "customer",
+        "text": "Köhnə və yeni paketlərin fərqini müqayisə edə bilərsiniz?",
+        "at": "12:42"
+      }
+    ]
+  },
+  {
+    "customer": "Vüsal A. · A08",
+    "channel": "web",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Salam, dünənki webinar haqqında məlumat verə bilərsiniz?",
+        "at": "12:41"
+      },
+      {
+        "from": "business",
+        "text": "Salam, mövzu rəqəmsal marketinq idi.",
+        "at": "12:43"
+      },
+      {
+        "from": "customer",
+        "text": "Təşəkkür edirəm. Sadəcə maraqlanırdım.",
+        "at": "12:45"
+      },
+      {
+        "from": "business",
+        "text": "Buyurun, başqa sualınız olsa yazın.",
+        "at": "12:47"
+      }
+    ]
+  }
+]

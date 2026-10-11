@@ -1,0 +1,25 @@
+﻿code,group,customer,expected_primary_intent,expected_stage,expected_objections,test_purpose
+P01,products,Aysel M.,compare,consideration,price; unclear_value,"Qiymət müqayisəsi, sübutsuz ümumi cavab, açıq qalan sual"
+P02,products,Murad B.,purchase,purchase_intent,delivery,"Vaxt kritikdir, satıcı əsas çatdırılma sualını ötürüb"
+P03,products,Nərgiz Ə.,purchase,purchase_intent,fit,"Müsbət dialoq, alış niyyəti, şişirdilmiş problem göstərilməməlidir"
+P04,products,Rövşən N.,info,consideration,trust; quality,Etibar və zəmanət şərtlərinin qeyri-müəyyən izahı
+P05,products,Leyla Q.,price,discovery,,Səbəb bildirmədən dialoqun bitməsi; itirilmiş satış faktı çıxarılmamalıdır
+P06,products,Elvin H.,purchase,purchase_intent,,"Müsbət satış nəticəsi, əsassız problem və ya itki aşkar edilməməlidir"
+P07,products,Səbinə T.,info,consideration,fit; trust,"Tərkib barədə cavabsız sual, sağlamlıq xüsusiyyətləri uydurulmamalıdır"
+P08,products,Kənan E.,info,consideration,,Vəd edilən materialın göndərilməməsi; əsas issue follow-up-dur
+S01,services,Sevinc R.,purchase,consideration,other,"Məhdud vaxt uyğunluğu, satıcı səhv etməyib"
+S02,services,Ramin F.,price,consideration,unclear_value,"Xidmət paketinin həcmi qeyri-müəyyən, konkret təklif yoxdur"
+S03,services,Günel A.,purchase,purchase_intent,,"Qeydiyyat niyyəti, açıq qalan ciddi etiraz yoxdur"
+S04,services,Tural İ.,compare,consideration,trust; quality,"Sübut tələb edən etibar etirazı, portfolio göndərilməyib"
+S05,services,Fidan M.,info,consideration,fit,"Xidmət formatı sualı cavabsızdır, maliyyə etirazı yoxdur"
+S06,services,Əli M.,purchase,purchase_intent,,"Rahat rezervasiya, məlumatlar aydın, alışı qazanılmış kimi şişirtməmək"
+S07,services,Esmira V.,compare,consideration,trust; unclear_value,Xidmət şərtləri qeyri-müəyyən; müqavilə və reviziya limitləri
+S08,services,Mətanət D.,resolve_problem,post_purchase,quality,"Satış sonrası xidmət, satıcının düzgün ilkin cavabı"
+A01,advanced,Elnur S.,info,consideration,unclear_value,İki sualdan yalnız birinə cavab verilib
+A02,advanced,Aynur C.,info,consideration,delivery,İngilis-Azərbaycan dili qarışığı; açıq bildirilmiş itki səbəbi
+A03,advanced,Cavid B.,compare,consideration,fit; unclear_value,"Öz ehtiyacına uyğun plan istəyir, satıcı populyarlıqla cavab verir"
+A04,advanced,Nigar P.,compare,consideration,price; unclear_value,"Açıq imtina, bir neçə etiraz, səbəblərə istinad mümkündür"
+A05,advanced,Samir K.,resolve_problem,post_purchase,trust,"Ödənişdən sonra dəstək, həssas məlumatları tələb etməmək"
+A06,advanced,Lalə Y.,compare,consideration,unclear_value; fit,"Kontekst azdır, satıcıya daha çox sual vermək lazımdır"
+A07,advanced,Elgün Q.,compare,consideration,price; unclear_value,Qiymət artımını əsaslandıran məlumat çatmır
+A08,advanced,Vüsal A.,info,discovery,,Heç bir alış niyyəti və ya problem yoxdur; yanlış satış itkisindən qaçın
